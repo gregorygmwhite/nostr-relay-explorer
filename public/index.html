@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nostr Relay Explorer</title>
+</head>
+<body>
+    <h1>Nostr Relay Explorer</h1>
+    <div id="relay-selector">
+        <form id="connectForm">
+            <label for="relay">Relay URL: </label>
+            <input type="text" id="relay" value="wss://relay.example.com">
+            <button type="submit" id="connect">Connect</button>
+        </form>
+    </div>
+
+    <div id="events-display-area">
+        <h2>Events</h2>
+        <div id="events">
+        </div>
+    </div>
+
+    <script src="/bundle.js"></script>
+</body>
+</html>
