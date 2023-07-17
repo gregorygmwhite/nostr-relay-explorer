@@ -14,8 +14,57 @@
                 <div class="input-group input-group-lg">
                     <span class="input-group-text" id="relay-url-descriptor">Relay</span>
                     <input id="relay" placeholder="wss://relay.damus.io" type="text" class="form-control" aria-label="Relay URL" aria-describedby="relay-url-descriptor">
-                    <button type="submit" id="query" class="btn btn-outline-primary">Query</button>
-                  </div>
+                </div>
+                <div class="mt-2">
+                    <label for="kinds-selection" class="form-label">Kinds of Events</label>
+                    <select class="form-select" id="kinds-selection" multiple aria-label="kinds of events">
+                        <option selected value="">All</option>
+                        <option value="0">0 (Metadata)</option>
+                        <option value="1">1 (Short Text Note)</option>
+                        <option value="2">2 (Recommended Relay)</option>
+                        <option value="3">3 (Contacts)</option>
+                        <option value="4">4 (Encrypted Direct Message)</option>
+                        <option value="5">5 (Event Deletion)</option>
+                        <option value="6">6 (Repost)</option>
+                        <option value="7">7 (Reaction)</option>
+                        <option value="8">8 (Badge Award)</option>
+                        <option value="16">16 (Generic Repost)</option>
+                        <option value="40">40 (Channel Creation)</option>
+                        <option value="41">41 (Channel Metadata)</option>
+                        <option value="42">42 (Channel Message)</option>
+                        <option value="43">43 (Channel Hide Message)</option>
+                        <option value="44">44 (Channel Mute User)</option>
+                        <option value="1063">1063 (File Metadata)</option>
+                        <option value="1311">1311 (Live Chat Message)</option>
+                        <option value="1984">1984 (Reporting)</option>
+                        <option value="1985">1985 (Label)</option>
+                        <option value="9734">9734 (Zap Request)</option>
+                        <option value="9735">9735 (Zap)</option>
+                        <option value="10000">10000 (Mute List)</option>
+                        <option value="10001">10001 (Pin List)</option>
+                        <option value="10002">10002 (Relay List Metadata)</option>
+                        <option value="13194">13194 (Wallet Info)</option>
+                        <option value="22242">22242 (Client Authentication)</option>
+                        <option value="23194">23194 (Wallet Request)</option>
+                        <option value="23195">23195 (Wallet Response)</option>
+                        <option value="24133">24133 (Nostr Connect)</option>
+                        <option value="27235">27235 (HTTP Auth)</option>
+                        <option value="30000">30000 (Categorized People List)</option>
+                        <option value="30001">30001 (Categorized Bookmark List)</option>
+                        <option value="30008">30008 (Profile Badges)</option>
+                        <option value="30009">30009 (Badge Definition)</option>
+                        <option value="30017">30017 (Create or update stall)</option>
+                        <option value="30018">30018 (Create or update product)</option>
+                        <option value="30023">30023 (Long form content)</option>
+                        <option value="30078">30078 (Application-specific Data)</option>
+                        <option value="30311">30311 (Live Event)</option>
+                        <option value="31989">31989 (Handler Recommendation)</option>
+                        <option value="31990">31990 (Handler Information)</option>
+                    </select>
+                </div>
+                <div class="button-group mt-4 clearfix">
+                    <button type="submit" id="query" class="btn btn-outline-primary btn-lg float-end">Query</button>
+                </div>
             </form>
         </div>
 
