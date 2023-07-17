@@ -26,9 +26,11 @@ form.addEventListener('submit', function(e) {
             for (let event of events) {
                 let eventDiv = document.createElement('div');
                 eventDiv.className = 'event card p-4 mb-4';
+                let eventPreDiv = document.createElement('pre');
                 let eventCodeDiv = document.createElement('code');
                 eventCodeDiv.textContent = JSON.stringify(event, undefined, 2);
-                eventDiv.appendChild(eventCodeDiv);
+                eventPreDiv.appendChild(eventCodeDiv);
+                eventDiv.appendChild(eventPreDiv);
                 eventsDiv.appendChild(eventDiv);
             }
         } catch (error) {
