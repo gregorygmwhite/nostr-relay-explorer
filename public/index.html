@@ -15,7 +15,12 @@
                     <span class="input-group-text" id="relay-url-descriptor">Relay</span>
                     <input id="relay" placeholder="wss://relay.damus.io" type="text" class="form-control" aria-label="Relay URL" aria-describedby="relay-url-descriptor">
                 </div>
-                <div class="mt-2">
+                <div class="mt-4">
+                    <label for="author" class="form-label">Author (public key)</label>
+                    <input id="author" placeholder="d7dd5eb3ab747e16f8d0212d53032ea2a7cadef53837e5a6c66d42849fcb9027" type="text" class="form-control" aria-label="Author public key">
+                    <div class="form-text">Must be a hex public key, convert npub to hex <a href="https://nostrcheck.me/converter/" target="_blank">here</a>. Leave blank to query all authors.</div>
+                </div>
+                <div class="mt-4">
                     <label for="kinds-selection" class="form-label">Kinds of Events</label>
                     <select class="form-select" id="kinds-selection" multiple aria-label="kinds of events">
                         <option selected value="">All</option>
@@ -61,6 +66,7 @@
                         <option value="31989">31989 (Handler Recommendation)</option>
                         <option value="31990">31990 (Handler Information)</option>
                     </select>
+                    <div class="form-text">List of kinds and what they mean can be found <a href="https://github.com/nostr-protocol/nips" target="_blank">here</a></div>
                 </div>
                 <div class="button-group mt-4 clearfix">
                     <button type="submit" id="query" class="btn btn-outline-primary btn-lg float-end">Query</button>

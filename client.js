@@ -7,12 +7,15 @@ const defaultLimit = 50;
 
 form.addEventListener('submit', function(e) {
     e.preventDefault();
-    const url = document.getElementById('relay').value;
+    const relayUrl = document.getElementById('relay').value;
+
     const kindsSelectionRaw = getSelectValues(document.getElementById('kinds-selection'));
     let kinds = parseKindsSelection(kindsSelectionRaw);
 
+    const authorPubKey = document.getElementById('author').value;
+
     // import and initialize the relay
-    const relay = relayInit(url);
+    const relay = relayInit(relayUrl);
 
     relay.on('connect', async () => {
         console.log(`Connected to ${relay.url}`);
@@ -30,6 +33,10 @@ form.addEventListener('submit', function(e) {
 
             if (kinds.length !== 0) {
                 queries[0]["kinds"] = kinds;
+            }
+
+            if (authorPubKey !== "") {
+                queries[0]["author"] = authorPubKey;
             }
 
             // get events from the relay
