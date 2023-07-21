@@ -1,6 +1,7 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# nostr-relay-explorer
+A basic web UI for exploring events within relays.
 
-## Getting Started
+This app is architected so that the connections to relays occurs on the client side (in the browser) so that it can respect the access of client to private relays.
 
 ## Setup for Development
 First, run the development server:
