@@ -36,7 +36,7 @@ form.addEventListener('submit', function(e) {
             }
 
             if (authorPubKey !== "") {
-                queries[0]["author"] = authorPubKey;
+                queries[0]["authors"] = [authorPubKey];
             }
 
             // get events from the relay
