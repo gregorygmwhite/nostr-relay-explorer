@@ -2,33 +2,45 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
+## Setup for Development
 First, run the development server:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+npm run next dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+You can also lint the project
+```bash
+npm run next lint
+```
 
-## Learn More
+## Usage
 
-To learn more about Next.js, take a look at the following resources:
+Once the application is running (either in development or production), open the app in your web browser.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Enter a relay url (must have the protocol included `ws://` or `wss://`)
+2. Click the "Connect" button to connect to the relay and start querying events.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+For now all it can do is query for events with a "kind" of 1 and it'll display them raw in html.
 
-## Deploy on Vercel
+## Setup for Development
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm run next build
+npm run next start
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+```
+
+## What's next
+Add a relay discovery tool to allow folks to discover relays by certain attributes (paid/not paid, community preferences, nips supported, etc)
+
+This tool would allow users to "register" a relay they're aware of and add it to the list of relays to be monitored by the tool.
+
+These registered relays would be queried regularly to refresh this app's record of the Relay's metadata. Including information about its community preferences.
+
+## Contributing
+
+Contributions are always welcome! Please feel free to open an issue or create a pull request if you would like to add features, fix bugs, or make other improvements to the project.
