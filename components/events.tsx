@@ -2,7 +2,7 @@ import { ReactElement } from "react";
 import { NostrEvent } from "../types/event";
 
 
-const EventsDisplay = ({
+const EventsList = ({
     events,
   }: {
     events: NostrEvent[];
@@ -28,4 +28,4 @@ const EventsDisplay = ({
     );
   };
 
-  export default EventsDisplay;
+  export default EventsList;

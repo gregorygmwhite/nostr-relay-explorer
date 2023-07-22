@@ -1,6 +1,7 @@
 'use client'
 
-import EventsDisplay from "../components/events";
+import EventsList from "../components/events";
+import RelayMetadata from "../components/relayMetadata";
 import { NOSTR_KINDS } from "@/config/consts";
 import { NostrEvent } from "@/types/event";
 import { useState } from "react";
@@ -15,7 +16,9 @@ const HomePage = () => {
   const [relayUrl, setRelayUrl] = useState("");
   const [author, setAuthor] = useState("");
   const [kinds, setKinds] = useState<string[]>([""]);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [metadata, setMetadata] = useState<any>({});
+  const [eventsErrorMessage, setEventsErrorMessage] = useState("");
+  const [metadataErrorMessage, setMetadataErrorMessage] = useState("");
 
 
   const handleKindsChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -29,6 +32,31 @@ const HomePage = () => {
     }
     return kinds.map(kind => parseInt(kind, 10));
   }
+
+  async function getRelayMetadata(relayUrl: string) {
+      // Replace "ws://" or "wss://" with "http://"
+      const httpUrl = relayUrl.replace(/^ws(s?):\/\//, 'http$1://');
+
+      try {
+          const response = await fetch(httpUrl, {
+              headers: {
+                  'Accept': 'application/nostr+json',
+              },
+          });
+
+          // Ensure the response is ok
+          if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const metadataRaw = await response.json();
+          setMetadata(metadataRaw);
+
+      } catch (error: any) {
+          console.error(`Failed to fetch relay metadata from ${httpUrl}`, error);
+          setMetadataErrorMessage(error.message)
+      }
+    }
 
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -57,22 +85,22 @@ const HomePage = () => {
             setEvents(eventsRaw);
         } catch (error: any) {
             console.error(`Error listing events: ${error.message}`);
-            setErrorMessage(error.message)
+            setEventsErrorMessage(error.message)
         }
     });
 
     relay.on('error', () => {
-        setErrorMessage(`Failed to connect to ${relay.url}`);
+        setEventsErrorMessage(`Failed to connect to ${relay.url}`);
     });
 
-
+    getRelayMetadata(relayUrl)
     // Establish a connection with the relay
     relay.connect();
   }
 
   return (
     <div className="max-w-screen-xl mx-auto px-4">
-      <h1 className="text-3xl font-bold underline text-center mt-4">Nostr Relay Explorer</h1>
+      <h1 className="text-3xl font-bold text-center mt-4">Inspector</h1>
       <div id="relay-selector" className="mt-4 w-full md:max-w-md lg:max-w-lg mx-auto">
         <form id="queryForm" onSubmit={handleSubmit} className="space-y-4">
           <div className="input-group input-group-lg">
@@ -117,14 +145,24 @@ const HomePage = () => {
         </form>
       </div>
 
+      {eventsErrorMessage !== "" ? (
+        <div className="alert alert-danger mt-4" role="alert">{eventsErrorMessage}</div>
+      ) : null }
+      {metadataErrorMessage !== "" ? (
+        <div className="alert alert-danger mt-4" role="alert">{metadataErrorMessage}</div>
+      ) : null }
+
       <div className="mt-4">
-        <h3 className="text-2xl font-bold mb-2">Results</h3>
-        <EventsDisplay events={events} />
+        <h3 className="text-2xl font-bold mb-2">Metadata</h3>
+        <RelayMetadata metadata={metadata} />
       </div>
 
-      {errorMessage !== "" ? (
-        <div className="alert alert-danger mt-4" role="alert">{errorMessage}</div>
-      ) : null }
+      <div className="mt-4">
+        <h3 className="text-2xl font-bold mb-2">Events</h3>
+        <EventsList events={events} />
+      </div>
+
+
     </div>
   )
 }
