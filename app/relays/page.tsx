@@ -24,7 +24,7 @@ export default async function RelayListPage({ relays }: {relays: DatabaseRespons
           <div key={relay.id} className="border p-4 mt-2 rounded-md">
             <h3 className="font-bold text-xl">{relay.name}</h3>
             <p>URL: {relay.url}</p>
-            <p>Registered At: {new Date(relay.registeredAt).toLocaleString()}</p>
+            <p>Registered At: {new Date(relay.registered_at).toLocaleString()}</p>
             <pre className="p-2 mt-2"><code>{JSON.stringify(relay.metadata, null, 2)}</code></pre>
           </div>
         ))}
