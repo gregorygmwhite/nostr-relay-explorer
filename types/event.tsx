@@ -57,7 +57,7 @@ export enum EventKind {
     HandlerInformation= 31990,
 }
 
-export type Event = {
+export type NostrEvent = {
     id: string,
     pubkey: PublicKey,
     created_at: Timestamp,

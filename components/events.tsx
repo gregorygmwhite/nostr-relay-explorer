@@ -1,11 +1,11 @@
 import { ReactElement } from "react";
-import { Event } from "../types/event";
+import { NostrEvent } from "../types/event";
 
 
 const EventsDisplay = ({
     events,
   }: {
-    events: Event[];
+    events: NostrEvent[];
   }): ReactElement => {
     return (
       <div>

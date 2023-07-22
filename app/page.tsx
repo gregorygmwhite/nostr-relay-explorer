@@ -2,6 +2,7 @@
 
 import EventsDisplay from "../components/events";
 import { NOSTR_KINDS } from "@/config/consts";
+import { NostrEvent } from "@/types/event";
 import { useState } from "react";
 import { relayInit } from 'nostr-tools';
 
@@ -10,7 +11,7 @@ const HomePage = () => {
   const defaultLimit = 100;
   const examplePubkey = "d7dd5eb3ab747e16f8d0212d53032ea2a7cadef53837e5a6c66d42849fcb9027";
 
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState<NostrEvent[]>([]);
   const [relayUrl, setRelayUrl] = useState("");
   const [author, setAuthor] = useState("");
   const [kinds, setKinds] = useState<string[]>([""]);
@@ -60,9 +61,10 @@ const HomePage = () => {
         }
     });
 
-    relay.on('error', (error: any) => {
-        setErrorMessage(`Failed to connect to ${relay.url}: ${error}`);
+    relay.on('error', () => {
+        setErrorMessage(`Failed to connect to ${relay.url}`);
     });
+
 
     // Establish a connection with the relay
     relay.connect();
@@ -101,7 +103,7 @@ const HomePage = () => {
           </div>
           <div className="mt-4">
               <label htmlFor="kinds-selection" className="form-label">Kinds of Events</label>
-              <select onChange={handleKindsChange} defaultValue="" value={kinds} multiple className="form-multiselect block w-full px-3 py-2 rounded-md border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+              <select onChange={handleKindsChange} value={kinds} multiple className="form-multiselect block w-full px-3 py-2 rounded-md border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                   <option key={""} value={""}>All</option>
                   {Object.entries(NOSTR_KINDS).map(([kind, kindDisplay]) => (
                       <option key={kind} value={kind}>{kindDisplay}</option>

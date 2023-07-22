@@ -4,18 +4,20 @@ A basic web UI for exploring events within relays.
 This app is architected so that the connections to relays occurs on the client side (in the browser) so that it can respect the access of client to private relays.
 
 ## Setup for Development
-First, run the development server:
+The app has a nextjs server as well as a database server
+
+First build the docker images and then run the servers
 
 ```bash
-npm run next dev
+make build
+make run
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-
 You can also lint the project
 ```bash
-npm run next lint
+make lint
 ```
 
 ## Usage
@@ -27,12 +29,13 @@ Once the application is running (either in development or production), open the 
 
 For now all it can do is query for events with a "kind" of 1 and it'll display them raw in html.
 
-## Setup for Development
+## Deployment
+In order to have the latest code, db schema, and run the application these are the necessary commands
 
 ```bash
-npm run next build
-npm run next start
-
+make build
+make migrate
+make run-production
 ```
 
 ## What's next
