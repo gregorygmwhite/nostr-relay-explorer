@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import { DateTime } from "luxon";
 
 const prisma = new PrismaClient()
 
@@ -10,6 +11,19 @@ async function main() {
     create: {
       email: 'admin@example.io',
       name: 'Admin',
+    },
+  })
+
+  const yesterday = DateTime.now().minus({ days: 1 }).toJSDate();
+
+  const damus = await prisma.relay.upsert({
+    where: { url: 'wss://relay.damus.io' },
+    update: {},
+    create: {
+      url: 'wss://relay.damus.io',
+      name: 'Damus',
+      metadata: {},
+      registeredAt: yesterday,
     },
   })
 }

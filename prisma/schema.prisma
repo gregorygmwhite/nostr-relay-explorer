@@ -22,3 +22,11 @@ enum Role {
   USER
   ADMIN
 }
+
+model Relay {
+  id           Int      @id @default(autoincrement())
+  url          String   @unique
+  name         String
+  metadata     Json
+  registeredAt DateTime @default(now())
+}
