@@ -9,7 +9,7 @@ const EventsDisplay = ({
   }): ReactElement => {
     return (
       <div>
-        {events.length > 0 && <div className="text-xl font-bold">First {events.length} Events</div>}
+        {events.length > 0 && <div className="text-xl font-bold">Latest {events.length} Events</div>}
         {events.length > 0 ? (
           events.map((event) => (
             <div key={event.id} className="p-6 my-4 border border-gray-300 rounded shadow">
