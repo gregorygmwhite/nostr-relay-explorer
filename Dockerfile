@@ -23,4 +23,6 @@ COPY --from=builder /app/public ./public
 
 EXPOSE 3000
 
+ENV PATH /app/node_modules/.bin:$PATH
+
 CMD ["npm", "run", "start"]
