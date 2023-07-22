@@ -1,6 +1,7 @@
 import { PrismaClient, Prisma } from "@prisma/client";
 import Link from 'next/link';
 import urls from '@/config/urls';
+import RelaysList from "@/components/relays";
 
 export default async function RelayListPage({ relays }: {relays: DatabaseResponse }) {
   const prisma = new PrismaClient();
@@ -20,14 +21,7 @@ export default async function RelayListPage({ relays }: {relays: DatabaseRespons
         </div>
       </div>
       <div className="mt-4">
-        {relays.map((relay: Prisma.Relay) => (
-          <div key={relay.id} className="border p-4 mt-2 rounded-md">
-            <h3 className="font-bold text-xl">{relay.name}</h3>
-            <p>URL: {relay.url}</p>
-            <p>Registered At: {new Date(relay.registered_at).toLocaleString()}</p>
-            <pre className="p-2 mt-2"><code>{JSON.stringify(relay.metadata, null, 2)}</code></pre>
-          </div>
-        ))}
+        <RelaysList relays={relays} />
       </div>
     </div>
   );

@@ -154,7 +154,9 @@ const HomePage = () => {
 
       <div className="mt-4">
         <h3 className="text-2xl font-bold mb-2">Metadata</h3>
-        <RelayMetadata metadata={metadata} />
+        <div className="p-6 my-4 border border-gray-300 rounded shadow">
+          <RelayMetadata metadata={metadata} />
+        </div>
       </div>
 
       <div className="mt-4">
