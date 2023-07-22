@@ -103,7 +103,7 @@ const HomePage = () => {
           </div>
           <div className="mt-4">
               <label htmlFor="kinds-selection" className="form-label">Kinds of Events</label>
-              <select onChange={handleKindsChange} defaultValue="" value={kinds} multiple className="form-multiselect block w-full px-3 py-2 rounded-md border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+              <select onChange={handleKindsChange} value={kinds} multiple className="form-multiselect block w-full px-3 py-2 rounded-md border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                   <option key={""} value={""}>All</option>
                   {Object.entries(NOSTR_KINDS).map(([kind, kindDisplay]) => (
                       <option key={kind} value={kind}>{kindDisplay}</option>
