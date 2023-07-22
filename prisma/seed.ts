@@ -23,7 +23,7 @@ async function main() {
       url: 'wss://relay.damus.io',
       name: 'Damus',
       metadata: {},
-      registeredAt: yesterday,
+      registered_at: yesterday,
     },
   })
 }
