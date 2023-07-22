@@ -94,6 +94,7 @@ const HomePage = () => {
     });
 
     getRelayMetadata(relayUrl)
+
     // Establish a connection with the relay
     relay.connect();
   }
