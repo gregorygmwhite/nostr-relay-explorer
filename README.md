@@ -29,10 +29,12 @@ Once the application is running (either in development or production), open the 
 
 For now all it can do is query for events with a "kind" of 1 and it'll display them raw in html.
 
-## Setup for Deployment
+## Deployment
+In order to have the latest code, db schema, and run the application these are the necessary commands
 
 ```bash
 make build
+make migrate
 make run-production
 ```
 

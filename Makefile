@@ -26,6 +26,7 @@ delete-data:
 
 reset-db:
 	docker-compose exec web prisma migrate reset -f
+	docker-compose exec web prisma generate
 
 seed-data:
 	docker-compose exec web prisma db seed -- --environment development
