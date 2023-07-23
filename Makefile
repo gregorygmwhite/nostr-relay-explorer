@@ -9,9 +9,6 @@ rebuild:
 bash:
 	docker-compose exec web sh
 
-lint:
-	docker-compose exec web npm run lint
-
 run:
 	docker-compose up
 
