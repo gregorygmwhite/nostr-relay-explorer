@@ -1,10 +1,49 @@
-import { PrismaClient, Relay } from "@prisma/client";
-import { Relay as RelayProp} from "@/types/relay";
+'use client'
+
+import { Relay } from "@prisma/client";
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import urls from '@/config/urls';
 import RelaysList from "@/components/relays";
 
-export default function RelayListPage({ relays }: {relays: RelayProp[] }) {
+async function getRelays() {
+  const response = await fetch(urls.apis.relays);
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const relaysRaw = response.json();
+  debugger
+  return relaysRaw;
+}
+
+export default function RelayListPage() {
+
+  const [relays, setRelays] = useState<Relay[]>([]);
+  const [relayFetchError, setRelayFetchError] = useState<string>("");
+
+
+  useEffect(() => {
+    async function getRelays() {
+      try {
+        const response = await fetch(urls.apis.relays);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const relaysRaw = await response.json();
+        setRelays(relaysRaw);
+      } catch (error: any) {
+        console.error(`Failed to fetch relays`, error);
+        setRelayFetchError(error.message);
+      }
+    }
+
+    getRelays();
+  }, []);
+
   return (
     <div className="max-w-screen-xl mx-auto px-4">
       <div className="mt-4">
@@ -25,16 +64,3 @@ export default function RelayListPage({ relays }: {relays: RelayProp[] }) {
   );
 }
 
-export async function getServerSideProps() {
-  const prisma = new PrismaClient();
-  const relays = await prisma.relay.findMany();
-
-  const serializedRelays = relays.map((relay: Relay) => ({
-    ...relay,
-    registered_at: relay.registered_at.toISOString(),
-  }));
-
-  return {
-    props: { relays: serializedRelays },
-  }
-}

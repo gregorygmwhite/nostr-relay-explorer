@@ -1,5 +1,3 @@
-// File: pages/api/relay.ts
-
 import { PrismaClient, Relay } from "@prisma/client";
 import { NextResponse } from 'next/server'
 import { getRelayMetadata } from '@/utils/relays'
