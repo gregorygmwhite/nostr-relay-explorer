@@ -1,12 +1,10 @@
-import { PrismaClient, Prisma } from "@prisma/client";
+import { PrismaClient, Relay } from "@prisma/client";
+import { Relay as RelayProp} from "@/types/relay";
 import Link from 'next/link';
 import urls from '@/config/urls';
 import RelaysList from "@/components/relays";
 
-export default async function RelayListPage({ relays }: {relays: DatabaseResponse }) {
-  const prisma = new PrismaClient();
-  relays = await prisma.relay.findMany();
-
+export default function RelayListPage({ relays }: {relays: RelayProp[] }) {
   return (
     <div className="max-w-screen-xl mx-auto px-4">
       <div className="mt-4">
@@ -27,6 +25,16 @@ export default async function RelayListPage({ relays }: {relays: DatabaseRespons
   );
 }
 
-type DatabaseResponse = {
-  rows: Prisma.Relay[]
+export async function getServerSideProps() {
+  const prisma = new PrismaClient();
+  const relays = await prisma.relay.findMany();
+
+  const serializedRelays = relays.map((relay: Relay) => ({
+    ...relay,
+    registered_at: relay.registered_at.toISOString(),
+  }));
+
+  return {
+    props: { relays: serializedRelays },
+  }
 }

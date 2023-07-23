@@ -2,6 +2,7 @@
 
 import { PrismaClient, Relay } from "@prisma/client";
 import { NextResponse } from 'next/server'
+import { getRelayMetadata } from '@/utils/relays'
 
 const prisma = new PrismaClient();
 
@@ -20,11 +21,14 @@ export async function POST(request: Request) {
       name = url
     }
 
+    const metadata = await getRelayMetadata(url)
+
     const newRelay: Relay = await prisma.relay.create({
       data: {
         url,
         name,
-        registered_at: new Date()
+        registered_at: new Date(),
+        metadata: metadata,
       },
     });
 

@@ -8,15 +8,13 @@ RUN npm install --frozen-lockfile
 
 COPY . .
 
+RUN npx prisma generate
 RUN npm run build
 
 # Stage 2: Run
 FROM node:18-alpine
 
 WORKDIR /app
-
-COPY package.json ./
-RUN npm install --production --frozen-lockfile
 
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public

@@ -1,18 +1,18 @@
 import { ReactElement } from "react";
-import { Prisma } from "@prisma/client";
+import { Relay } from "@/types/relay";
 import RelayMetadata from "./relayMetadata";
 
 
 const RelaysList = ({
     relays,
   }: {
-    relays: Prisma.Relay[];
+    relays: Relay[];
   }): ReactElement => {
 
     let relaysList: ReactElement[] = []
     if (relays !== undefined) {
         relaysList = (
-            relays.map((relay: Prisma.Relay) => (
+            relays.map((relay: Relay) => (
                 <div key={relay.id} className="p-6 my-4 border border-gray-300 rounded shadow">
                     <h3 className="font-bold text-xl">{relay.name}</h3>
                     <p>URL: {relay.url}</p>

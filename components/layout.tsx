@@ -1,16 +1,9 @@
-import './globals.css'
-import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import Link from 'next/link'
 import urls from '@/config/urls'
 import Head from 'next/head';
 
 const inter = Inter({ subsets: ['latin'] })
-
-export const metadata: Metadata = {
-  title: 'Nostr Relay Explorer',
-  description: 'A way to discover and query Nostr relays',
-}
 
 export default function RootLayout({
   children,
