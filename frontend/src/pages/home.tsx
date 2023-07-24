@@ -101,7 +101,7 @@ const HomePage = () => {
 
   return (
     <Container className="my-4">
-      <h1 className="text-center mb-4">Nostr Relay Explorer</h1>
+      <h1 className="text-center mb-4">Nostr Relay Inspector</h1>
 
       <Container className="mb-4">
         <Form onSubmit={handleSubmit}>
