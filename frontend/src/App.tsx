@@ -1,24 +1,23 @@
 import React from 'react';
-import './App.css';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Navbar from './components/nav';
+import HomePage from './pages/home';
+import RelayListPage from './pages/relays/relays';
+import RelayCreatePage from './pages/relays/create';
+import pages from './config/pages';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const App: React.FC = () => {
+    return (
+        <Router>
+            <Navbar />
+            <Routes>
+              <Route path={pages.home} element={<HomePage />} />
+              <Route path={pages.relays.inspector} element={<HomePage />} />
+              <Route path={pages.relays.list} element={<RelayListPage />} />
+              <Route path={pages.relays.create} element={<RelayCreatePage />} />
+            </Routes>
+        </Router>
+    );
 }
 
 export default App;

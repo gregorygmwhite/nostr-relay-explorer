@@ -6,10 +6,13 @@ build:
 rebuild:
 	docker-compose build --no-cache
 
-bash:
+bash-backend:
 	docker-compose exec backend sh
 
-run-all:
+bash-frontend:
+	docker-compose exec frontend sh
+
+run-dev-all:
 	docker-compose up
 
 run-backend:
