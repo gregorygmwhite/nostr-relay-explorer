@@ -1,50 +1,70 @@
-# nostr-relay-explorer
-A basic web UI for exploring events within relays.
+# Getting Started with Create React App
 
-This app is architected so that the connections to relays occurs on the client side (in the browser) so that it can respect the access of client to private relays.
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Setup for Development
-The app has a nextjs server as well as a database server
+## Available Scripts
 
-First build the docker images and then run the servers
+In the project directory, you can run:
 
-```bash
-make build
-make run
-```
+### `npm start`
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-You can also lint the project
-```bash
-make lint
-```
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
 
-## Usage
+### `npm test`
 
-Once the application is running (either in development or production), open the app in your web browser.
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-1. Enter a relay url (must have the protocol included `ws://` or `wss://`)
-2. Click the "Connect" button to connect to the relay and start querying events.
+### `npm run build`
 
-For now all it can do is query for events with a "kind" of 1 and it'll display them raw in html.
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-## Deployment
-In order to have the latest code, db schema, and run the application these are the necessary commands
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
 
-```bash
-make build
-make migrate
-make run-production
-```
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-## What's next
-Add a relay discovery tool to allow folks to discover relays by certain attributes (paid/not paid, community preferences, nips supported, etc)
+### `npm run eject`
 
-This tool would allow users to "register" a relay they're aware of and add it to the list of relays to be monitored by the tool.
+**Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
-These registered relays would be queried regularly to refresh this app's record of the Relay's metadata. Including information about its community preferences.
+If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-## Contributing
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
 
-Contributions are always welcome! Please feel free to open an issue or create a pull request if you would like to add features, fix bugs, or make other improvements to the project.
+You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+
+## Learn More
+
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+
+To learn React, check out the [React documentation](https://reactjs.org/).
+
+### Code Splitting
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+
+### Analyzing the Bundle Size
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+
+### Making a Progressive Web App
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+
+### Advanced Configuration
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+
+### Deployment
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+
+### `npm run build` fails to minify
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)

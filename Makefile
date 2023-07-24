@@ -7,23 +7,30 @@ rebuild:
 	docker-compose build --no-cache
 
 bash:
-	docker-compose exec web sh
+	docker-compose exec backend sh
 
-run:
+run-all:
 	docker-compose up
 
-run-production:
-	docker-compose run --service-ports --use-aliases --rm web
+run-backend:
+	docker-compose run --service-ports --use-aliases --rm backend
+
+run-db:
+	docker-compose run --service-ports --use-aliases --rm db
+
+run-frontend:
+	docker-compose run --service-ports --use-aliases --rm frontend
 
 migrate:
-	docker-compose exec web prisma migrate deploy
+	docker-compose exec backend python manage.py migrate
+
+make-migrations:
+	docker-compose exec backend python manage.py makemigrations
 
 delete-data:
-	docker-compose exec web prisma migrate reset -f --skip-seed
+	docker-compose exec backend python manage.py reset_db -c --noinput
 
 reset-db:
-	docker-compose exec web prisma migrate reset -f
-	docker-compose exec web prisma generate
-
-seed-data:
-	docker-compose exec web prisma db seed -- --environment development
+	docker-compose exec backend python manage.py flush --noinput
+	docker-compose exec backend python manage.py migrate
+# docker-compose exec python manage.py seed_db
