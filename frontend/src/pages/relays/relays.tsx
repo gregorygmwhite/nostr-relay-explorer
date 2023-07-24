@@ -4,6 +4,7 @@ import pages from '../../config/pages';
 import Relay from "../../types/relays";
 import { Link } from 'react-router-dom';
 import RelaysList from "../../components/relays/list";
+import { generateFullApiURL} from '../../utils/api'
 
 export default function RelayListPage() {
 
@@ -14,7 +15,8 @@ export default function RelayListPage() {
   useEffect(() => {
     async function getRelays() {
       try {
-        const response = await fetch(urls.api.relaysList);
+        const fullAPIRoute = generateFullApiURL(urls.api.relaysList)
+        const response = await fetch(fullAPIRoute);
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -32,17 +34,15 @@ export default function RelayListPage() {
   }, []);
 
   return (
-    <div className="max-w-screen-xl mx-auto px-4">
-      <div className="mt-4">
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold mt-4">Relays</h1>
-          <Link
-            to={pages.relays.create}
-            className="nline-block px-6 py-3 text-xs font-medium leading-6 text-center text-white uppercase transition bg-blue-700 rounded shadow ripple hover:shadow-lg hover:bg-blue-800 focus:outline-none"
-            >
-              Create Relay
-          </Link>
-        </div>
+    <div className="container mt-4">
+      <div className="d-flex justify-content-between align-items-center">
+        <h1 className="mt-4">Relays</h1>
+        <Link
+          to={pages.relays.create}
+          className="btn btn-primary"
+          >
+            Create Relay
+        </Link>
       </div>
       <div className="mt-4">
         <RelaysList relays={relays} />

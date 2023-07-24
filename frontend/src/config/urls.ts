@@ -1,8 +1,8 @@
 
 const urls = {
     api: {
-        relaysList: '/api/relays',
-        relaysCreate: '/api/relays',
+        relaysList: '/api/relays/',
+        relaysCreate: '/api/relays/',
     }
 }
 
