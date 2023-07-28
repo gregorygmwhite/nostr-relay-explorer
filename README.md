@@ -1,70 +1,62 @@
-# Getting Started with Create React App
+# nostr-relay-explorer
+A basic web UI for exploring events within relays.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This app is architected so that the connections to relays occurs on the client side (in the browser) so that it can respect the access of client to private relays.
 
-## Available Scripts
+## Setup for Development
+The app is a split frontend and backend app. The frontend is a vanilla React app, the backend is a django app.
 
-In the project directory, you can run:
 
-### `npm start`
+Getting started build the docker images
+```bash
+make build
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Setting up the frontend
+```bash
+make run-frontend
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the frontend app.
 
-### `npm test`
+### Setting up the backend
+```bash
+make run-backend
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+The backend is just an API that's running on [http://localhost:8000](http://localhost:8000). You can use the API via Django REST Framework UI for testing purposes, you'll also be able to use django's admin interface as a superuser to edit any of the data directly.
 
-### `npm run build`
+## Usage
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Once the application is running (either in development or production), open the app in your web browser.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+1. Enter a relay url (must have the protocol included `ws://` or `wss://`)
+2. Click the "Connect" button to connect to the relay and start querying events.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+For now all it can do is query for events on a specific relay. You can specify a selection of kinds of events as well as filter by the pubkey of the author.
 
-### `npm run eject`
+## Deployment
+In order to have the latest code, db schema, and run the application these are the necessary commands
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Backend deployment
+```bash
+make build
+make migrate
+make run-backend
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Frontend deployment
+```bash
+make build
+make run-frontend
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## What's next
+1. Add way to discover relays based on their metadata (paid/not paid, community preferences, nips supported, etc)
+2. Add ability to regularly update the metadata of relays tracked by the application
+3. Allow users to "register" a relay they're aware of and add it to the list of relays to be monitored by the tool.
+4. Make the discovery interface easier to use (I suck at design)
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Contributing
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Contributions are always welcome! Please feel free to open an issue or create a pull request if you would like to add features, fix bugs, or make other improvements to the project.
