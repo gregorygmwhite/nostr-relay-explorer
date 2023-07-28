@@ -25,10 +25,10 @@ class Command(BaseCommand):
             url="wss://relay.damus.io",
             name="Damus",
         )
-        relay1.save()
+        relay1.update_metadata()
 
         relay2 = Relay.objects.create(
             url="wss://nostr.wine",
             name="nostr.wine",
         )
-        relay2.save()
+        relay2.update_metadata()
