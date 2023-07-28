@@ -10,9 +10,9 @@ from huey.contrib import djhuey
     )
 )
 def update_metadata_for_all_relays():
-    relays = Relay.objects.is_actively_being_tracked()
+    relays = Relay.objects.is_being_tracked()
     for relay in relays:
-        update_metadata_for_relay(relay)
+        update_metadata_for_relay(relay.id)
 
 @djhuey.db_task()
 def update_metadata_for_relay(relay_id):

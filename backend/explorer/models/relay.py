@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from explorer.validators.urls import validate_ws_url
 from explorer.utils import get_metadata_from_relay_url
 import uuid
@@ -7,12 +8,13 @@ import uuid
 class RelayQueryset(models.QuerySet):
     def is_being_tracked(self, is_being_tracked=True):
         return self.filter(
-            actively_tracked=is_being_tracked,
+            active_tracking=is_being_tracked,
         )
 
-class RelayManager(models.Manager):
+class RelayManager(models.Manager.from_queryset(
+        RelayQueryset,
+    )):
     pass
-
 
 class Relay(models.Model):
     objects = RelayManager()
@@ -101,6 +103,16 @@ class Relay(models.Model):
 
     tracked_since = models.DateTimeField(auto_now_add=True)
 
+    last_metadata_update = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    last_update_success = models.BooleanField(
+        null=True,
+        blank=True,
+    )
+
     active_tracking = models.BooleanField(
         default=True,
     )
@@ -109,8 +121,15 @@ class Relay(models.Model):
         """
         Updates the metadata field with the latest metadata from the relay.
         """
-        metadata = get_metadata_from_relay_url(self.url)
-        self.save_new_metadata(metadata)
+        try:
+
+            metadata = get_metadata_from_relay_url(self.url)
+            self.save_new_metadata(metadata)
+        except Exception as e:
+            print(f"Failed to fetch metadata from {self.url}. Error: {str(e)}")
+            self.last_update_success = False
+            self.last_metadata_update = timezone.now()
+            self.save()
 
     def save_new_metadata(self, metadata):
         name, pubkey, contact, software, version, description = self.deserialize_basic_metadata(metadata)
@@ -146,6 +165,8 @@ class Relay(models.Model):
             self.payments_url = payments_url
 
         self.full_metadata = metadata
+        self.last_metadata_update = timezone.now()
+        self.last_update_success = True
         self.save()
 
     def deserialize_fees(self, fees_dict):

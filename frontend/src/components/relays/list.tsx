@@ -25,6 +25,8 @@ const RelaysList = ({
           <p>Admission Fees (Sats): {relay.admission_fees_sats}</p>
           <p>Publication Fees (Sats): {relay.publication_fees_sats}</p>
           <p>Tracking since: {relay.tracked_since}</p>
+          <p>Last update: {relay.last_metadata_update}</p>
+          <p>Last update success: {relay.last_update_success ? 'Yes' : 'No'}</p>
           <RelayMetadata metadata={relay.full_metadata} />
         </div>
       </div>

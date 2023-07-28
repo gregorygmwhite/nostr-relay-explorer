@@ -15,6 +15,8 @@ type Relay = {
     publication_fees_sats: number | null;
     limitations: any;
     tracked_since: string | null;
+    last_metadata_update: string | null;
+    last_update_success: boolean | null;
 }
 
 export default Relay;
