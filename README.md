@@ -52,10 +52,9 @@ make run-frontend
 ```
 
 ## What's next
-1. Add way to discover relays based on their metadata (paid/not paid, community preferences, nips supported, etc)
-2. Add ability to regularly update the metadata of relays tracked by the application
-3. Allow users to "register" a relay they're aware of and add it to the list of relays to be monitored by the tool.
-4. Make the discovery interface easier to use (I suck at design)
+1. Make it easy for users to "register" a relay they're aware of and add it to the list of relays to be monitored by the tool.
+2. Add way to discover relays based on their metadata (paid/not paid, community preferences, nips supported, etc)
+3. Make the discovery interface easier to use (I suck at design)
 
 ## Contributing
 

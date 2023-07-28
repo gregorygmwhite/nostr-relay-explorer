@@ -16,10 +16,7 @@ run-dev-all:
 	docker-compose up
 
 run-backend:
-	docker-compose run --service-ports --use-aliases --rm backend
-
-run-db:
-	docker-compose run --service-ports --use-aliases --rm db
+	docker-compose up backend db redis worker --remove-orphans
 
 run-frontend:
 	docker-compose run --service-ports --use-aliases --rm frontend

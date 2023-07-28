@@ -46,16 +46,6 @@ const RelayForm: React.FC = () => {
                   required
                 />
               </div>
-              <div className="form-group">
-                <label htmlFor="name">Name</label>
-                <input
-                  className="form-control"
-                  id="name"
-                  type="text"
-                  placeholder="Damus Main Relay"
-                  onChange={(e) => setName(e.target.value)}
-                />
-              </div>
               <div className="text-right mt-4">
                 <button className="btn btn-primary" type="submit">
                   Submit

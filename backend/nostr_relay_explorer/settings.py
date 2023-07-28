@@ -24,7 +24,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-0wk_v+_*py&st^$%a)leg!5wea23syv7r!y76wwoh0s@o!dh)c'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DJANGO_ENVIRONMENT = os.getenv("DJANGO_ENVIRONMENT")
+TESTING = os.getenv("TESTING", default=False) == "true"
+IS_LOCALHOST = DJANGO_ENVIRONMENT == "local"
+IS_DEV = DJANGO_ENVIRONMENT == "dev"
+IS_PRODUCTION = DJANGO_ENVIRONMENT == "production"
+IS_STAGING = DJANGO_ENVIRONMENT == "staging"
+IS_BUILD = DJANGO_ENVIRONMENT == "build"
+DEBUG = IS_DEV or TESTING or IS_LOCALHOST
 
 ALLOWED_HOSTS = []
 
@@ -40,6 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    'django_extensions',
+    'huey.contrib.djhuey',
     'explorer',
     'meta',
 ]
@@ -140,3 +149,41 @@ FRONTEND_URL = os.getenv("FRONTEND_URL", default="http://localhost:3000")
 CORS_ALLOWED_ORIGINS = [
     FRONTEND_URL,
 ]
+
+HUEY = {
+    "name": "main",
+    # Task polling
+    "huey_class": "huey.PriorityRedisExpireHuey",  # Prioritized tasks
+    "immediate": False,
+    "blocking": False,
+    # Results
+    "results": True,  # Store task results
+    "store_none": False,  # Don't store result if None
+    # Redis connection
+    "connection": {
+        "url": os.getenv("HUEY_REDIS_URL"),
+        "read_timeout": 10,
+    },
+    # Consumer settings (single-queue)
+    "consumer": {
+        "workers": os.getenv("HUEY_CONSUMER_WORKER_COUNT",  1),
+        "worker_type": "process",
+        # Intervals
+        "max_delay": 10,  # Maximum wait when polling
+        "backoff": 1.15,  # Exponential rate for retrying failed tasks
+        # Scheduled tasks
+        "periodic": True,  # Enabled
+        "scheduler_interval": 1,  # Check every second
+        # Health check
+        "check_worker_health": True,
+        "health_check_interval": 10,
+    },
+}
+
+if TESTING:  # Disable async when testing
+    HUEY.update(
+        {
+            "immediate": True,  # Run tasks from the Django process
+            "huey_class": "huey.FileHuey",  # Disable remote result storage
+        }
+    )
