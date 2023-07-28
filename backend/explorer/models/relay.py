@@ -1,5 +1,6 @@
 from django.db import models
 from explorer.validators.urls import validate_ws_url
+from explorer.utils import get_metadata_from_relay_url
 import uuid
 
 class Relay(models.Model):
@@ -23,4 +24,11 @@ class Relay(models.Model):
         blank=True,
         null=True,
     )
+
+    def update_metadata(self):
+        """
+        Updates the metadata field with the latest metadata from the relay.
+        """
+        self.metadata = get_metadata_from_relay_url(self.url)
+        self.save()
 
