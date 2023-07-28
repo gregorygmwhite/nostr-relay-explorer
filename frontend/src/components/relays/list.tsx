@@ -24,6 +24,7 @@ const RelaysList = ({
           <p>Payments URL: {relay.payments_url}</p>
           <p>Admission Fees (Sats): {relay.admission_fees_sats}</p>
           <p>Publication Fees (Sats): {relay.publication_fees_sats}</p>
+          <p>Tracking since: {relay.tracked_since}</p>
           <RelayMetadata metadata={relay.full_metadata} />
         </div>
       </div>

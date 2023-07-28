@@ -14,6 +14,7 @@ type Relay = {
     admission_fees_sats: number | null;
     publication_fees_sats: number | null;
     limitations: any;
+    tracked_since: string | null;
 }
 
 export default Relay;

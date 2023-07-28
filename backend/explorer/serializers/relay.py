@@ -10,7 +10,12 @@ class RelaySerializer(serializers.ModelSerializer):
             'id', 'name', 'url', 'full_metadata', 'pubkey', 'contact', 'software',
             'version', 'description', 'supported_nips', 'payment_required',
             'payments_url', 'admission_fees_sats', 'publication_fees_sats',
-            'limitations'
+            'limitations', 'tracked_since'
+        ]
+        read_only_fields = [
+            'id', 'name', 'full_metadata', 'pubkey', 'contact', 'software', 'version',
+            'description', 'supported_nips', 'payment_required', 'payments_url',
+            'admission_fees_sats', 'publication_fees_sats', 'limitations', 'tracked_since'
         ]
 
     def validate_url(self, value):

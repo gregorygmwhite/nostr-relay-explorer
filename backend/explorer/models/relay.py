@@ -4,7 +4,19 @@ from explorer.utils import get_metadata_from_relay_url
 import uuid
 
 
+class RelayQueryset(models.QuerySet):
+    def is_being_tracked(self, is_being_tracked=True):
+        return self.filter(
+            actively_tracked=is_being_tracked,
+        )
+
+class RelayManager(models.Manager):
+    pass
+
+
 class Relay(models.Model):
+    objects = RelayManager()
+
     id = models.UUIDField(
         primary_key=True,
         editable=False,
@@ -87,6 +99,12 @@ class Relay(models.Model):
         null=True,
     )
 
+    tracked_since = models.DateTimeField(auto_now_add=True)
+
+    active_tracking = models.BooleanField(
+        default=True,
+    )
+
     def update_metadata(self):
         """
         Updates the metadata field with the latest metadata from the relay.
@@ -160,5 +178,8 @@ class Relay(models.Model):
         return ",".join(str_list)
 
     def get_supported_nips_list(self):
-        str_list = self.supported_nips.split(",")
-        return [int(i) for i in str_list]
+        if self.supported_nips is None:
+            return []
+        else:
+            str_list = self.supported_nips.split(",")
+            return [int(i) for i in str_list]
