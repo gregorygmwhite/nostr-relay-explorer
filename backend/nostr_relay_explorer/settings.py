@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'explorer',
+    'meta',
 ]
 
 MIDDLEWARE = [
