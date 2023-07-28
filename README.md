@@ -4,21 +4,27 @@ A basic web UI for exploring events within relays.
 This app is architected so that the connections to relays occurs on the client side (in the browser) so that it can respect the access of client to private relays.
 
 ## Setup for Development
-The app has a nextjs server as well as a database server
+The app is a split frontend and backend app. The frontend is a vanilla React app, the backend is a django app.
 
-First build the docker images and then run the servers
 
+Getting started build the docker images
 ```bash
 make build
-make run
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can also lint the project
+### Setting up the frontend
 ```bash
-make lint
+make run-frontend
 ```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the frontend app.
+
+### Setting up the backend
+```bash
+make run-backend
+```
+
+The backend is just an API that's running on [http://localhost:8000](http://localhost:8000). You can use the API via Django REST Framework UI for testing purposes, you'll also be able to use django's admin interface as a superuser to edit any of the data directly.
 
 ## Usage
 
@@ -27,23 +33,29 @@ Once the application is running (either in development or production), open the 
 1. Enter a relay url (must have the protocol included `ws://` or `wss://`)
 2. Click the "Connect" button to connect to the relay and start querying events.
 
-For now all it can do is query for events with a "kind" of 1 and it'll display them raw in html.
+For now all it can do is query for events on a specific relay. You can specify a selection of kinds of events as well as filter by the pubkey of the author.
 
 ## Deployment
 In order to have the latest code, db schema, and run the application these are the necessary commands
 
+### Backend deployment
 ```bash
 make build
 make migrate
-make run-production
+make run-backend
+```
+
+### Frontend deployment
+```bash
+make build
+make run-frontend
 ```
 
 ## What's next
-Add a relay discovery tool to allow folks to discover relays by certain attributes (paid/not paid, community preferences, nips supported, etc)
-
-This tool would allow users to "register" a relay they're aware of and add it to the list of relays to be monitored by the tool.
-
-These registered relays would be queried regularly to refresh this app's record of the Relay's metadata. Including information about its community preferences.
+1. Add way to discover relays based on their metadata (paid/not paid, community preferences, nips supported, etc)
+2. Add ability to regularly update the metadata of relays tracked by the application
+3. Allow users to "register" a relay they're aware of and add it to the list of relays to be monitored by the tool.
+4. Make the discovery interface easier to use (I suck at design)
 
 ## Contributing
 
