@@ -19,6 +19,10 @@ services:
       - "8000:8000"
     depends_on:
       - db
+      - redis
+    environment:
+      HUEY_REDIS_URL: redis://redis:6379/2
+      DJANGO_ENVIRONMENT: dev
 
   frontend:
     build: ./frontend
@@ -29,6 +33,28 @@ services:
       - "3000:3000"
     environment:
       - REACT_APP_API_BASE_URL=http://localhost:8000
+
+  worker:
+    build: ./backend
+    volumes:
+      - ./backend:/app
+    command: python manage.py run_huey
+    depends_on:
+      - redis
+    environment:
+      DJANGO_ENVIRONMENT: dev
+      HUEY_REDIS_URL: redis://redis:6379/2
+
+  redis:
+    image: redis:6-alpine
+    volumes:
+      - ./_local/redis:/data:rw,delegated
+    healthcheck:
+      test: redis-cli ping
+      start_period: 10s  # Enough for first initialization
+      interval: 1s
+      retries: 10
+      timeout: 5s
 
 volumes:
   postgres_data:

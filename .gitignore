@@ -28,3 +28,5 @@ yarn-error.log*
 # Backend
 
 /**/**/__pycache__/
+
+_local
