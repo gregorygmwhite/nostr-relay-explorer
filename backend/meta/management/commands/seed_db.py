@@ -2,6 +2,13 @@ from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 from explorer.models import Relay
 
+
+RELAY_LIST = [
+    "wss://relay.damus.io",
+    "wss://nostr.wine",
+    "wss://eden.nostr.land",
+]
+
 class Command(BaseCommand):
     help = 'Seed the database'
 
@@ -21,14 +28,8 @@ class Command(BaseCommand):
         superuser.save()
 
     def create_relays(self):
-        relay1 = Relay.objects.create(
-            url="wss://relay.damus.io",
-            name="Damus",
-        )
-        relay1.update_metadata()
-
-        relay2 = Relay.objects.create(
-            url="wss://nostr.wine",
-            name="nostr.wine",
-        )
-        relay2.update_metadata()
+        for relay in RELAY_LIST:
+            new_relay = Relay.objects.create(
+                url=relay,
+            )
+            new_relay.update_metadata()

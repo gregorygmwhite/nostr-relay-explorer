@@ -6,7 +6,12 @@ from explorer.models import Relay
 class RelaySerializer(serializers.ModelSerializer):
     class Meta:
         model = Relay
-        fields = ['id', 'name', 'url', 'metadata']
+        fields = [
+            'id', 'name', 'url', 'full_metadata', 'pubkey', 'contact', 'software',
+            'version', 'description', 'supported_nips', 'payment_required',
+            'payments_url', 'admission_fees_sats', 'publication_fees_sats',
+            'limitations'
+        ]
 
     def validate_url(self, value):
         """
@@ -23,3 +28,9 @@ class RelaySerializer(serializers.ModelSerializer):
             raise ValidationError('URL must be in the form of wss://relay.something.com or ws://relay.something.com')
 
         return value
+
+    def to_representation(self, instance):
+        """ Convert `supported_nips` field back to list in the serialized data. """
+        ret = super().to_representation(instance)
+        ret['supported_nips'] = instance.get_supported_nips_list()
+        return ret
