@@ -1,7 +1,7 @@
 import { ReactElement } from "react";
 import Relay from "../../types/relays";
-import RelayMetadata from "./relayMetadata";
 import RelayCard from "./relayCard";
+import LoadingIndicator from "../common/loadingIndicator";
 
 const RelaysList = ({
   relays,
@@ -18,7 +18,7 @@ const RelaysList = ({
   return (
     <div>
       {relays === undefined ? (
-        <div>Loading...</div>
+        <LoadingIndicator />
       ) : relays.length > 0 ? (
         <div>
           <div className="h4 font-weight-bold">

@@ -12,7 +12,7 @@ const RelayCard = ({
     relay: Relay
 }): ReactElement => {
     return (
-        <Card key={relay.id}>
+        <Card key={relay.id} className="mb-4">
             <div className="m-4">
                 <Card.Title>
                     <Link to={pages.getRelayView(relay.id)}>
