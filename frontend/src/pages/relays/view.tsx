@@ -11,11 +11,12 @@ import { generateFullApiURL } from "../../utils/api";
 import {
     useParams
 } from "react-router-dom";
+import LoadingIndicator from "../../components/common/loadingIndicator";
 
 const RelayDetailPage = (): ReactElement => {
 
     let { id } = useParams<{ id: string }>();
-    const [relay, setRelay] = useState<Relay>({} as Relay);
+    const [relay, setRelay] = useState<Relay>();
     const [relayFetchError, setRelayFetchError] = useState<string>("");
 
 
@@ -50,7 +51,13 @@ const RelayDetailPage = (): ReactElement => {
                     {relayFetchError}
                 </div>
             ) : (
-                <RelayCard relay={relay} />
+                <>
+                    {relay ? (
+                        <RelayCard relay={relay} />
+                    ) : (
+                        <LoadingIndicator />
+                    )}
+                </>
             )}
         </div>
     )

@@ -8,7 +8,7 @@ type Relay = {
     software: string | null;
     version: string | null;
     description: string | null;
-    supported_nips: string | null;
+    supported_nips: number[];
     payment_required: boolean;
     payments_url: string | null;
     admission_fees_sats: number | null;
