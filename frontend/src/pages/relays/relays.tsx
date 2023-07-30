@@ -50,7 +50,7 @@ export default function RelayListPage() {
       <div className="d-flex justify-content-between align-items-center">
         <h1 className="mt-2">Relays</h1>
         <Link
-          to={pages.relays.create}
+          to={pages.getRelaysCreate()}
           className="btn btn-primary"
           >
             Create Relay

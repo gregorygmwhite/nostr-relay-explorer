@@ -22,7 +22,7 @@ const RelayForm: React.FC = () => {
     });
 
     if (res.status === 200 || res.status === 201) {
-      navigate(pages.relays.list);
+      navigate(pages.getRelaysList());
     } else {
       alert('Failed to create relay');
     }

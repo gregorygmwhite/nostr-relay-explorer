@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Navbar from './components/nav';
-import HomePage from './pages/home';
+import InspectorPage from './pages/inspector';
 import RelayListPage from './pages/relays/relays';
 import RelayCreatePage from './pages/relays/create';
 import RelayDetailPage from './pages/relays/view';
@@ -12,11 +12,11 @@ const App: React.FC = () => {
         <Router>
             <Navbar />
             <Routes>
-              <Route path={pages.home} element={<HomePage />} />
-              <Route path={pages.relays.inspector} element={<HomePage />} />
-              <Route path={pages.relays.list} element={<RelayListPage />} />
-              <Route path={pages.relays.create} element={<RelayCreatePage />} />
-              <Route path={pages.relays.view} element={<RelayDetailPage />} />
+              <Route path={pages.getHome()} element={<RelayListPage />} />
+              <Route path={pages.getInspector()} element={<InspectorPage />} />
+              <Route path={pages.getRelaysList()} element={<RelayListPage />} />
+              <Route path={pages.getRelaysCreate()} element={<RelayCreatePage />} />
+              <Route path={pages.getRelaysViewRaw()} element={<RelayDetailPage />} />
             </Routes>
         </Router>
     );

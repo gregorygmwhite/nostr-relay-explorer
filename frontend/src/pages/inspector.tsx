@@ -6,7 +6,7 @@ import { relayInit } from 'nostr-tools';
 import RelayMetadata from "../components/relays/relayMetadata";
 import { Container, Form, FormGroup, InputGroup, Button, Alert } from 'react-bootstrap';
 
-const HomePage = () => {
+const InspectorPage = () => {
 
   const defaultLimit = 100;
   const examplePubkey = "d7dd5eb3ab747e16f8d0212d53032ea2a7cadef53837e5a6c66d42849fcb9027";
@@ -166,4 +166,4 @@ const HomePage = () => {
   )
 }
 
-export default HomePage;
+export default InspectorPage;
