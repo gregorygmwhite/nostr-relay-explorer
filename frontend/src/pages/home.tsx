@@ -125,7 +125,9 @@ const HomePage = () => {
               value={author}
               onChange={(e) => setAuthor(e.target.value)}
             />
-            <Form.Text className="text-muted">Must be a hex public key, convert npub to hex <a href="https://nostrcheck.me/converter/" className="text-info">here</a>. Leave blank to query all authors.</Form.Text>
+            <Form.Text className="text-muted">
+              Must be a hex public key, convert npub to hex <a href="https://nostrcheck.me/converter/" className="text-info" target="_blank">here</a>. Leave blank to query all authors.
+            </Form.Text>
           </FormGroup>
 
           <FormGroup className="mb-3">

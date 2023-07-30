@@ -10,6 +10,7 @@ The app is a split frontend and backend app. The frontend is a vanilla React app
 Getting started build the docker images
 ```bash
 make build
+make reset-db
 ```
 
 ### Setting up the frontend
