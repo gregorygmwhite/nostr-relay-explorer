@@ -20,6 +20,7 @@ const RelayCard = ({
                     </Link>
                 </Card.Title>
                 <Card.Subtitle className="text-muted">{relay.url}</Card.Subtitle>
+                <div className="text-muted"><a href={`${pages.getInspector()}?relayUrl=${relay.url}`}>Inspect</a></div>
             </div>
             <Card.Body className="pt-0">
                 <Accordion>

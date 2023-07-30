@@ -1,7 +1,7 @@
 type UrlId = number | string;
 
 const pages = {
-    getHome(): string { return "/relays" },
+    getHome(): string { return "/" },
 
     getRelaysList(): string { return "/relays" },
     getRelaysCreate(): string { return "/relays/create" },
