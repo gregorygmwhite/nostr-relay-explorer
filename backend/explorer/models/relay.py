@@ -193,6 +193,8 @@ class Relay(models.Model):
         name = metadata.get("name", None)
         pubkey = metadata.get("pubkey", None)
         contact = metadata.get("contact", None)
+        if contact and contact.startswith('mailto:'):
+            contact = contact.replace('mailto:', '', 1)
         software = metadata.get("software", None)
         version = metadata.get("version", None)
         description = metadata.get("description", None)
@@ -200,8 +202,8 @@ class Relay(models.Model):
         return name, pubkey, contact, software, version, description
 
     def get_supported_nips_list(self):
-        str_list = self.supported_nips.values_list('nip', flat=True)
-        return ",".join(str(nip) for nip in str_list)
+        nip_list = self.supported_nips.values_list('nip', flat=True)
+        return list(nip_list)
 
     def deserialize_supported_nips(self, supported_nips_raw):
         # Check that all NIPs in the raw data are integers.
