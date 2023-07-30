@@ -16,6 +16,7 @@ django = "^4.1"
 huey = "^2.4.5"
 redis = "^4.6.0"
 django-extensions = "^3.2.3"
+django-filter = "^23.2"
 
 [tool.poetry.group.dev.dependencies]
 coverage = "^6.5.0"

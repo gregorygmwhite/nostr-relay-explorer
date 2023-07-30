@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_extensions',
     'huey.contrib.djhuey',
+    'django_filters',
     'explorer',
     'meta',
 ]

@@ -133,6 +133,17 @@ python-versions = ">=3.6"
 Django = ">=3.2"
 
 [[package]]
+name = "django-filter"
+version = "23.2"
+description = "Django-filter is a reusable Django application for allowing users to filter querysets dynamically."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+Django = ">=3.2"
+
+[[package]]
 name = "django-rest-passwordreset"
 version = "1.3.0"
 description = "An extension of django rest framework, providing a configurable password reset strategy"
@@ -544,7 +555,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9.13"
-content-hash = "a998859f409ed2adddbfa37bcb89d4d6507491a0917bc52689e261b7e4406e06"
+content-hash = "3f03d34457234e83c08374fc8203fb2996cad3007656f086d025fe8c5664192e"
 
 [metadata.files]
 appnope = [
@@ -719,6 +730,10 @@ django-cors-headers = [
 django-extensions = [
     {file = "django-extensions-3.2.3.tar.gz", hash = "sha256:44d27919d04e23b3f40231c4ab7af4e61ce832ef46d610cc650d53e68328410a"},
     {file = "django_extensions-3.2.3-py3-none-any.whl", hash = "sha256:9600b7562f79a92cbf1fde6403c04fee314608fefbb595502e34383ae8203401"},
+]
+django-filter = [
+    {file = "django-filter-23.2.tar.gz", hash = "sha256:2fe15f78108475eda525692813205fa6f9e8c1caf1ae65daa5862d403c6dbf00"},
+    {file = "django_filter-23.2-py3-none-any.whl", hash = "sha256:d12d8e0fc6d3eb26641e553e5d53b191eb8cec611427d4bdce0becb1f7c172b5"},
 ]
 django-rest-passwordreset = [
     {file = "django-rest-passwordreset-1.3.0.tar.gz", hash = "sha256:0d76eb8d0be9636f4404fd35e8a0842c968effeac1d141c55a45aef1ebce54c7"},

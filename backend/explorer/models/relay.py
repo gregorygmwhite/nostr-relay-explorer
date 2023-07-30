@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from explorer.validators.urls import validate_ws_url
 from explorer.utils import get_metadata_from_relay_url
+from .nip import NIP
 import uuid
 
 
@@ -70,10 +71,9 @@ class Relay(models.Model):
         null=True,
     )
 
-    supported_nips = models.CharField(
-        max_length=1048,
+    supported_nips = models.ManyToManyField(
+        NIP,
         blank=True,
-        null=True,
     )
 
     payment_required = models.BooleanField(
@@ -117,6 +117,9 @@ class Relay(models.Model):
         default=True,
     )
 
+    def __str__(self):
+        return "{} - {} - created: {}".format(self.name, self.url, self.tracked_since)
+
     def update_metadata(self):
         """
         Updates the metadata field with the latest metadata from the relay.
@@ -143,7 +146,9 @@ class Relay(models.Model):
 
         supported_nips_raw = metadata.get("supported_nips", None)
         if supported_nips_raw:
-            self.supported_nips = self.deserialize_supported_nips(supported_nips_raw)
+            new_nips = self.deserialize_supported_nips(supported_nips_raw)
+            self.supported_nips.clear()
+            self.supported_nips.add(*new_nips)
 
         limitations = metadata.get("limitation", None)
         if limitations:
@@ -194,13 +199,15 @@ class Relay(models.Model):
 
         return name, pubkey, contact, software, version, description
 
-    def deserialize_supported_nips(self, supported_nips_raw):
-        str_list = [str(i) for i in supported_nips_raw]
-        return ",".join(str_list)
-
     def get_supported_nips_list(self):
-        if self.supported_nips is None:
-            return []
+        str_list = self.supported_nips.values_list('nip', flat=True)
+        return ",".join(str(nip) for nip in str_list)
+
+    def deserialize_supported_nips(self, supported_nips_raw):
+        # Check that all NIPs in the raw data are integers.
+        if all(isinstance(nip, int) for nip in supported_nips_raw):
+            # Use get_or_create to either fetch the existing NIPs or create new ones.
+            return [NIP.objects.get_or_create(nip=nip)[0] for nip in supported_nips_raw]
         else:
-            str_list = self.supported_nips.split(",")
-            return [int(i) for i in str_list]
+            # You may want to raise an exception or handle this case differently.
+            raise ValueError("All supported NIPs must be integers.")
