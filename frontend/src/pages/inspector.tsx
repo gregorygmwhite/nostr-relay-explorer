@@ -16,6 +16,7 @@ import {
   Accordion,
   Card,
 } from 'react-bootstrap';
+import { Check } from 'react-bootstrap-icons';
 
 const InspectorPage = () => {
 
@@ -214,6 +215,9 @@ const InspectorPage = () => {
                     <h3 className="text-2xl font-bold mb-2 me-3">
                       Metadata
                     </h3>
+                    {Object.keys(metadata).length !== 0 && (
+                        <Check size={35} />
+                    )}
                     {metadataLoading && (
                       <div className="ml-3">
                         <LoadingIndicator />
