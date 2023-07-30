@@ -14,7 +14,7 @@ def get_metadata_from_relay_url(relay_url):
     try:
         # Send a request to the user-provided URL to gather metadata
         headers = {'Accept': 'application/nostr+json'}
-        response = requests.get(http_url, headers=headers)
+        response = requests.get(http_url, headers=headers, timeout=2)
 
         if response.status_code == 200:
             # Let's assume that the response is a JSON containing metadata
@@ -25,3 +25,4 @@ def get_metadata_from_relay_url(relay_url):
     except RequestException as e:
         # Handle or log the exception appropriately
         print(f"Failed to fetch metadata from {relay_url}. Error: {str(e)}")
+

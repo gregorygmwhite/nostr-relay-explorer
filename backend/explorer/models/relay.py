@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from explorer.validators.urls import validate_ws_url
 from explorer.utils import get_metadata_from_relay_url
+from meta.utils import normalize_to_sats
 from .nip import NIP
 import uuid
 
@@ -178,20 +179,27 @@ class Relay(models.Model):
     def deserialize_fees(self, fees_dict):
         admission_fees_sats, publication_fees_sats = None, None
         admission_fees_raw = fees_dict.get("admission", None)
-        if admission_fees_raw:
+        if admission_fees_raw and isinstance(admission_fees_raw, list) and len(admission_fees_raw) > 0:
             first_element = admission_fees_raw[0]
             admission_fees_sats = first_element.get("amount", None)
-
+            denom = first_element.get("unit", "sats")
+            if admission_fees_sats:
+                admission_fees_sats = normalize_to_sats(admission_fees_sats, denom)
 
         publication_fees_raw = fees_dict.get("publication", None)
-        if publication_fees_raw:
+        if publication_fees_raw and isinstance(publication_fees_raw, list) and len(publication_fees_raw) > 0:
             first_element = publication_fees_raw[0]
             publication_fees_sats = first_element.get("amount", None)
+            denom = first_element.get("unit", "sats")
+            if publication_fees_sats:
+                publication_fees_sats = normalize_to_sats(publication_fees_sats, denom)
 
         return admission_fees_sats, publication_fees_sats
 
     def deserialize_basic_metadata(self, metadata):
         name = metadata.get("name", None)
+        if name is None:
+            name = metadata.get("url", None)
         pubkey = metadata.get("pubkey", None)
         contact = metadata.get("contact", None)
         if contact and contact.startswith('mailto:'):

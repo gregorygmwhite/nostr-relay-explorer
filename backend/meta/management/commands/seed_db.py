@@ -1,13 +1,8 @@
+import random
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 from explorer.models import Relay
-
-
-RELAY_LIST = [
-    "wss://relay.damus.io",
-    "wss://nostr.wine",
-    "wss://eden.nostr.land",
-]
+from meta.constants import SEED_RELAY_LIST
 
 class Command(BaseCommand):
     help = 'Seed the database'
@@ -28,8 +23,9 @@ class Command(BaseCommand):
         superuser.save()
 
     def create_relays(self):
-        for relay in RELAY_LIST:
+        for relay in random.sample(SEED_RELAY_LIST, 50):
             new_relay = Relay.objects.create(
                 url=relay,
             )
             new_relay.update_metadata()
+            self.stdout.write(self.style.SUCCESS('Created relay: ' + relay))
