@@ -34,7 +34,8 @@ class Relay(models.Model):
 
     url = models.CharField(
         max_length=200,
-        validators=[validate_ws_url]
+        validators=[validate_ws_url],
+        unique=True,
     )
 
     full_metadata = models.JSONField(
