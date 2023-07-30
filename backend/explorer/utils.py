@@ -25,4 +25,5 @@ def get_metadata_from_relay_url(relay_url):
     except RequestException as e:
         # Handle or log the exception appropriately
         print(f"Failed to fetch metadata from {relay_url}. Error: {str(e)}")
+        raise e
 

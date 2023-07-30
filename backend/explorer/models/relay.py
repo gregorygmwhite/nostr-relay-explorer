@@ -1,3 +1,4 @@
+from requests.exceptions import RequestException
 from django.db import models
 from django.utils import timezone
 from explorer.validators.urls import validate_ws_url
@@ -127,13 +128,20 @@ class Relay(models.Model):
         Updates the metadata field with the latest metadata from the relay.
         """
         try:
-
             metadata = get_metadata_from_relay_url(self.url)
             self.save_new_metadata(metadata)
-        except Exception as e:
-            print(f"Failed to fetch metadata from {self.url}. Error: {str(e)}")
+        except RequestException as e:
+            self.active_tracking = False
             self.last_update_success = False
             self.last_metadata_update = timezone.now()
+            self.save()
+        except Exception as e:
+            print(f"Failed to update metadata from {self.url}. Error: {str(e)}")
+            self.last_update_success = False
+            self.last_metadata_update = timezone.now()
+            self.save()
+        if self.name is None or self.name == "":
+            self.name = self.url
             self.save()
 
     def save_new_metadata(self, metadata):
