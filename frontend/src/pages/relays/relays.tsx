@@ -47,15 +47,6 @@ export default function RelayListPage() {
 
   return (
     <div className="container mt-2">
-      <div className="d-flex justify-content-between align-items-center">
-        <h1 className="mt-2">Relays</h1>
-        <Link
-          to={pages.getRelaysCreate()}
-          className="btn btn-primary"
-          >
-            Create Relay
-        </Link>
-      </div>
       <Card className="mt-2 p-4">
           <form onSubmit={handleFormSubmit} style={{ maxWidth: "40rem"}}>
               <Form.Group className="mb-3">

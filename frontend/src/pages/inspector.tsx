@@ -155,8 +155,6 @@ const InspectorPage = () => {
 
   return (
     <Container className="mt-3">
-      <h1 className="text-center mb-3">Nostr Relay Inspector</h1>
-
       <Card className="mb-4 p-4">
         <Form onSubmit={handleSubmit}>
           <InputGroup className="mb-3">

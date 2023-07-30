@@ -1,0 +1,4 @@
+.nav-link.active {
+    border-bottom: 2px solid black; /* adjust color as needed */
+    padding-bottom: 0.2rem; /* adjust as needed, this helps with spacing */
+}

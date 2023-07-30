@@ -25,9 +25,18 @@ const RelaysList = ({
         <LoadingIndicator />
       ) : relays.length > 0 ? (
         <div>
-          <div className="h5">
-            {relays.length} results
-          </div>
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <div className="h5">
+              {relays.length} results
+            </div>
+          <Link
+            to={pages.getRelaysCreate()}
+            className="btn btn-primary"
+            >
+              Suggest Relay
+          </Link>
+        </div>
+
           {relays && (
             <Table hover responsive>
               <thead>
