@@ -27,7 +27,7 @@ const RelaysList = ({
         <div>
           <div className="d-flex justify-content-between align-items-center mb-3">
             <div className="h5">
-              {relays.length} results
+              {relays.length} matching relays
             </div>
           <Link
             to={pages.getRelaysCreate()}
