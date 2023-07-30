@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import EventsDisplay from "../components/events/events";
 import { NOSTR_KINDS } from "../config/consts";
 import { NostrEvent } from "../types/event";
@@ -23,6 +23,7 @@ const InspectorPage = () => {
   const examplePubkey = "d7dd5eb3ab747e16f8d0212d53032ea2a7cadef53837e5a6c66d42849fcb9027";
 
   const location = useLocation();
+  let [searchParams, setSearchParams] = useSearchParams();
 
   const [events, setEvents] = useState<NostrEvent[]>([]);
   const [eventsLoading, setEventsLoading] = useState<boolean>(false);
@@ -61,6 +62,7 @@ const InspectorPage = () => {
 
   async function getRelayMetadata(relayUrl: string) {
     setMetadataLoading(true);
+    setMetadata({})
     setMetadataErrorMessage("");
     // Replace "ws://" or "wss://" with "http://"
     const httpUrl = relayUrl.replace(/^ws(s?):\/\//, 'http$1://');
@@ -93,9 +95,13 @@ const InspectorPage = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault(); // Prevent the form from reloading the page
 
+    const newParams = { relayUrl: relayUrl };
+    setSearchParams(newParams);
+
     // import and initialize the relay
     const relay = relayInit(relayUrl);
     setEventsLoading(true);
+    setEvents([]);
     setEventsErrorMessage("");
 
     relay.on('connect', async () => {
