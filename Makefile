@@ -35,4 +35,4 @@ reset-db:
 	docker-compose exec backend python manage.py migrate explorer zero
 	docker-compose exec backend python manage.py migrate meta zero
 	docker-compose exec backend python manage.py migrate
-	docker-compose exec backend python manage.py seed_db
+	docker-compose exec backend python manage.py seed_dev_data

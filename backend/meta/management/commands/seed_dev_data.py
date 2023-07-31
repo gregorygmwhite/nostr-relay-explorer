@@ -23,7 +23,7 @@ class Command(BaseCommand):
         superuser.save()
 
     def create_relays(self):
-        for relay in random.sample(SEED_RELAY_LIST, 50):
+        for relay in random.sample(SEED_RELAY_LIST, 20):
             new_relay = Relay.objects.create(
                 url=relay,
             )

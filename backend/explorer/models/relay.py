@@ -104,6 +104,12 @@ class Relay(models.Model):
         null=True,
     )
 
+    posting_policy = models.URLField(
+        max_length=1048,
+        blank=True,
+        null=True,
+    )
+
     tracked_since = models.DateTimeField(auto_now_add=True)
 
     last_metadata_update = models.DateTimeField(
@@ -153,6 +159,10 @@ class Relay(models.Model):
         self.software = software
         self.version = version
         self.description = description
+
+        posting_policty = metadata.get("posting_policy", None)
+        if posting_policty:
+            self.posting_policy = posting_policty
 
         supported_nips_raw = metadata.get("supported_nips", None)
         if supported_nips_raw:

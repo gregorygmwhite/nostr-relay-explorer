@@ -16,6 +16,9 @@ const RelayCard = ({
 }: {
     relay: Relay
 }): ReactElement => {
+    const hasCommunityPreferences = !!relay.posting_policy;
+    const COMMUNITY_PREFERNCES_NIP = "https://github.com/nostr-protocol/nips/blob/master/11.md#community-preferences"
+
     return (
         <Card key={relay.id} className="mb-4">
             <div className="m-4 d-flex flex-row justify-content-between align-items-start">
@@ -54,7 +57,7 @@ const RelayCard = ({
                                         {relay.payments_url ? (
                                             <a href={relay.payments_url} target="_blank">Payment instructions</a>
                                         ) : (
-                                            <p>'Payment Instruction Unknown'</p>
+                                            <div>Payment Instructions Unknown</div>
                                         )}
                                     </div>
                                     <div>
@@ -71,6 +74,36 @@ const RelayCard = ({
                             ) : (
                                 <div className="text-muted">No payment required</div>
                             )}
+                        </Accordion.Body>
+                    </Accordion.Item>
+                </Accordion>
+                <Accordion>
+                    <Accordion.Item eventKey="0">
+                        <Accordion.Header>
+                            <div className="mr-4">Community Preferences</div>
+                        </Accordion.Header>
+                        <Accordion.Body>
+                            <div>
+                                {hasCommunityPreferences ? (
+                                    <div>
+                                        {relay.posting_policy ? (
+                                            <a href={relay.posting_policy} target="_blank">Posting Policy</a>
+                                        ) : (
+                                            <div>Posting Policy: Unknown</div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div>
+                                        <div>
+                                            Community Preferences not set.
+                                        </div>
+                                        <div>
+                                            Set Community Preferences to attract users based on location, interest or existing community identity. <a href={COMMUNITY_PREFERNCES_NIP} target="_blank">Learn more</a>
+                                        </div>
+                                    </div>
+
+                                )}
+                            </div>
                         </Accordion.Body>
                     </Accordion.Item>
                 </Accordion>
