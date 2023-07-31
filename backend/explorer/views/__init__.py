@@ -1,1 +1,4 @@
-from .api.relays import RelayListCreateView
+from .api.relays import (
+    RelayListCreateView,
+    RelayRetrieveView,
+)

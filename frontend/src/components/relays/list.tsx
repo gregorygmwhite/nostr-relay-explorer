@@ -1,51 +1,73 @@
 import { ReactElement } from "react";
 import Relay from "../../types/relays";
-import RelayMetadata from "./relayMetadata";
+import { useNavigate, Link } from 'react-router-dom';
+import LoadingIndicator from "../common/loadingIndicator";
+import pages from "../../config/pages";
+import { Table } from "react-bootstrap";
+import CopyableText from "../common/copyableText";
 
 const RelaysList = ({
   relays,
 }: {
   relays: Relay[];
 }): ReactElement => {
-  let relaysList: ReactElement[] = [];
-  if (relays !== undefined) {
-    relaysList = relays.map((relay: Relay) => (
-      <div key={relay.id} className="card my-3 shadow-sm">
-        <div className="card-body">
-          <h3 className="card-title">{relay.name}</h3>
-          <p className="card-text">URL: {relay.url}</p>
-          <p>Pubkey: {relay.pubkey}</p>
-          <p>Contact: {relay.contact}</p>
-          <p>Software: {relay.software}</p>
-          <p>Version: {relay.version}</p>
-          <p>Description: {relay.description}</p>
-          <p>Supported NIPs: {relay.supported_nips}</p>
-          <p>Payment Required: {relay.payment_required ? 'Yes' : 'No'}</p>
-          <p>Payments URL: {relay.payments_url}</p>
-          <p>Admission Fees (Sats): {relay.admission_fees_sats}</p>
-          <p>Publication Fees (Sats): {relay.publication_fees_sats}</p>
-          <p>Tracking since: {relay.tracked_since}</p>
-          <p>Last update: {relay.last_metadata_update}</p>
-          <p>Last update success: {relay.last_update_success ? 'Yes' : 'No'}</p>
-          <RelayMetadata metadata={relay.full_metadata} />
-        </div>
-      </div>
-    ));
+
+  const navigate = useNavigate();
+
+  const handleRowClick = (event: any, relayId: string) => {
+    event.preventDefault();
+    navigate(pages.getRelayView(relayId));
   }
 
   return (
-    <div>
+    <div className="mt-4">
       {relays === undefined ? (
-        <div>Loading...</div>
+        <LoadingIndicator />
       ) : relays.length > 0 ? (
         <div>
-          <div className="h4 font-weight-bold">
-            Latest {relays.length} relays
-          </div>
-          {relaysList}
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <div className="h5">
+              {relays.length} matching relays
+            </div>
+          <Link
+            to={pages.getRelaysCreate()}
+            className="btn btn-primary"
+            >
+              Suggest Relay
+          </Link>
+        </div>
+
+          {relays && (
+            <Table hover responsive>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>URL</th>
+                  <th>Payment Required</th>
+                </tr>
+              </thead>
+              <tbody>
+                {relays.map((relay: Relay) => (
+                  <tr>
+                    <td>
+                      <Link to={pages.getRelayView(relay.id)}>
+                        {relay.name}
+                      </Link>
+                    </td>
+                    <td>
+                      <CopyableText text={relay.url} />
+                    </td>
+                    <td>
+                      {relay.payment_required ? "Yes" : "-"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          )}
         </div>
       ) : (
-        <div className="card my-3 shadow-sm">
+        <div className="card mt-4 shadow-sm">
           <div className="card-body">
             <p className="card-text">No relays found</p>
           </div>

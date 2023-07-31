@@ -10,6 +10,7 @@ The app is a split frontend and backend app. The frontend is a vanilla React app
 Getting started build the docker images
 ```bash
 make build
+make reset-db
 ```
 
 ### Setting up the frontend
@@ -52,9 +53,9 @@ make run-frontend
 ```
 
 ## What's next
-1. Make it easy for users to "register" a relay they're aware of and add it to the list of relays to be monitored by the tool.
-2. Add way to discover relays based on their metadata (paid/not paid, community preferences, nips supported, etc)
-3. Make the discovery interface easier to use (I suck at design)
+1. Add way to discover relays based on their metadata (paid/not paid, community preferences, nips supported, etc)
+2. Make the discovery interface easier to use (I suck at design)
+3. Support more metadata tags (languages, community preferences, link out to posting policy)
 
 ## Contributing
 

@@ -1,7 +1,10 @@
+from requests.exceptions import RequestException
 from django.db import models
 from django.utils import timezone
 from explorer.validators.urls import validate_ws_url
 from explorer.utils import get_metadata_from_relay_url
+from meta.utils import normalize_to_sats
+from .nip import NIP
 import uuid
 
 
@@ -33,7 +36,8 @@ class Relay(models.Model):
 
     url = models.CharField(
         max_length=200,
-        validators=[validate_ws_url]
+        validators=[validate_ws_url],
+        unique=True,
     )
 
     full_metadata = models.JSONField(
@@ -70,10 +74,9 @@ class Relay(models.Model):
         null=True,
     )
 
-    supported_nips = models.CharField(
-        max_length=1048,
+    supported_nips = models.ManyToManyField(
+        NIP,
         blank=True,
-        null=True,
     )
 
     payment_required = models.BooleanField(
@@ -101,6 +104,12 @@ class Relay(models.Model):
         null=True,
     )
 
+    posting_policy = models.URLField(
+        max_length=1048,
+        blank=True,
+        null=True,
+    )
+
     tracked_since = models.DateTimeField(auto_now_add=True)
 
     last_metadata_update = models.DateTimeField(
@@ -117,18 +126,28 @@ class Relay(models.Model):
         default=True,
     )
 
+    def __str__(self):
+        return "{} - {} - created: {}".format(self.name, self.url, self.tracked_since)
+
     def update_metadata(self):
         """
         Updates the metadata field with the latest metadata from the relay.
         """
         try:
-
             metadata = get_metadata_from_relay_url(self.url)
             self.save_new_metadata(metadata)
-        except Exception as e:
-            print(f"Failed to fetch metadata from {self.url}. Error: {str(e)}")
+        except RequestException as e:
+            self.active_tracking = False
             self.last_update_success = False
             self.last_metadata_update = timezone.now()
+            self.save()
+        except Exception as e:
+            print(f"Failed to update metadata from {self.url}. Error: {str(e)}")
+            self.last_update_success = False
+            self.last_metadata_update = timezone.now()
+            self.save()
+        if self.name is None or self.name == "":
+            self.name = self.url
             self.save()
 
     def save_new_metadata(self, metadata):
@@ -141,9 +160,15 @@ class Relay(models.Model):
         self.version = version
         self.description = description
 
+        posting_policty = metadata.get("posting_policy", None)
+        if posting_policty:
+            self.posting_policy = posting_policty
+
         supported_nips_raw = metadata.get("supported_nips", None)
         if supported_nips_raw:
-            self.supported_nips = self.deserialize_supported_nips(supported_nips_raw)
+            new_nips = self.deserialize_supported_nips(supported_nips_raw)
+            self.supported_nips.clear()
+            self.supported_nips.add(*new_nips)
 
         limitations = metadata.get("limitation", None)
         if limitations:
@@ -172,35 +197,46 @@ class Relay(models.Model):
     def deserialize_fees(self, fees_dict):
         admission_fees_sats, publication_fees_sats = None, None
         admission_fees_raw = fees_dict.get("admission", None)
-        if admission_fees_raw:
+        if admission_fees_raw and isinstance(admission_fees_raw, list) and len(admission_fees_raw) > 0:
             first_element = admission_fees_raw[0]
             admission_fees_sats = first_element.get("amount", None)
-
+            denom = first_element.get("unit", "sats")
+            if admission_fees_sats:
+                admission_fees_sats = normalize_to_sats(admission_fees_sats, denom)
 
         publication_fees_raw = fees_dict.get("publication", None)
-        if publication_fees_raw:
+        if publication_fees_raw and isinstance(publication_fees_raw, list) and len(publication_fees_raw) > 0:
             first_element = publication_fees_raw[0]
             publication_fees_sats = first_element.get("amount", None)
+            denom = first_element.get("unit", "sats")
+            if publication_fees_sats:
+                publication_fees_sats = normalize_to_sats(publication_fees_sats, denom)
 
         return admission_fees_sats, publication_fees_sats
 
     def deserialize_basic_metadata(self, metadata):
         name = metadata.get("name", None)
+        if name is None:
+            name = metadata.get("url", None)
         pubkey = metadata.get("pubkey", None)
         contact = metadata.get("contact", None)
+        if contact and contact.startswith('mailto:'):
+            contact = contact.replace('mailto:', '', 1)
         software = metadata.get("software", None)
         version = metadata.get("version", None)
         description = metadata.get("description", None)
 
         return name, pubkey, contact, software, version, description
 
-    def deserialize_supported_nips(self, supported_nips_raw):
-        str_list = [str(i) for i in supported_nips_raw]
-        return ",".join(str_list)
-
     def get_supported_nips_list(self):
-        if self.supported_nips is None:
-            return []
+        nip_list = self.supported_nips.values_list('nip', flat=True)
+        return list(nip_list)
+
+    def deserialize_supported_nips(self, supported_nips_raw):
+        # Check that all NIPs in the raw data are integers.
+        if all(isinstance(nip, int) for nip in supported_nips_raw):
+            # Use get_or_create to either fetch the existing NIPs or create new ones.
+            return [NIP.objects.get_or_create(nip=nip)[0] for nip in supported_nips_raw]
         else:
-            str_list = self.supported_nips.split(",")
-            return [int(i) for i in str_list]
+            # You may want to raise an exception or handle this case differently.
+            raise ValueError("All supported NIPs must be integers.")

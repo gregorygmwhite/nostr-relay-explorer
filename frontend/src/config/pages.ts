@@ -1,10 +1,15 @@
+type UrlId = number | string;
+
 const pages = {
-    home: "/",
-    relays: {
-        inspector: "/relays/inspector/",
-        list: "/relays",
-        create: "/relays/create",
-    }
+    getHome(): string { return "/" },
+
+    getRelaysList(): string { return "/relays" },
+    getRelaysCreate(): string { return "/relays/create" },
+
+    getRelaysViewRaw(): string { return "/relays/:id" },
+    getRelayView: (relayId: UrlId): string => `/relays/${relayId}`,
+
+    getInspector(): string { return "/inspector" },
 };
 
 export default pages;
