@@ -6,6 +6,7 @@ import getSupportedNipsDisplay from "../../utils/getSupportedNipsDisplay";
 import { Accordion, Card } from "react-bootstrap";
 import { CurrencyBitcoin, X } from "react-bootstrap-icons";
 import CopyableText from "../common/copyableText";
+import StatusIndicator from "../common/statusIndicator";
 import {
     humanReadableDateTimeFromISO,
     humanReadableDateFromISO
@@ -109,7 +110,14 @@ const RelayCard = ({
                 </Accordion>
                 <Accordion>
                     <Accordion.Item eventKey="0">
-                        <Accordion.Header>Status</Accordion.Header>
+                        <Accordion.Header>
+                            <div className="d-flex flex-row justify-content-start align-items-center">
+                                <div className="me-2">Status</div>
+                                <div>
+                                    <StatusIndicator status={relay.last_update_success ? "active" : "inactive"} />
+                                </div>
+                            </div>
+                        </Accordion.Header>
                         <Accordion.Body>
                             <div className="d-flex flew-row justify-content-start align-items-center">
                                 <div className="font-weight-bold me-2">Is active:</div>
