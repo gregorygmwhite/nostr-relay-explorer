@@ -33,11 +33,7 @@ IS_STAGING = DJANGO_ENVIRONMENT == "staging"
 IS_BUILD = DJANGO_ENVIRONMENT == "build"
 DEBUG = IS_DEV or TESTING or IS_LOCALHOST
 
-ALLOWED_HOSTS = [
-    "*.onrender.com",
-    "relay.guide",
-    "*.relay.guide",
-]
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
