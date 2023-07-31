@@ -1,10 +1,15 @@
 import { ReactElement } from "react";
 import Relay from "../../types/relays";
 import RelayMetadata from "./relayMetadata";
-import { Link } from "react-router-dom";
 import pages from "../../config/pages";
 import getSupportedNipsDisplay from "../../utils/getSupportedNipsDisplay";
 import { Accordion, Card } from "react-bootstrap";
+import { CurrencyBitcoin, X } from "react-bootstrap-icons";
+import CopyableText from "../common/copyableText";
+import {
+    humanReadableDateTimeFromISO,
+    humanReadableDateFromISO
+} from "../../utils/time";
 
 const RelayCard = ({
     relay
@@ -13,45 +18,111 @@ const RelayCard = ({
 }): ReactElement => {
     return (
         <Card key={relay.id} className="mb-4">
-            <div className="m-4">
-                <Card.Title>
-                    <Link to={pages.getRelayView(relay.id)}>
+            <div className="m-4 d-flex flex-row justify-content-between align-items-start">
+                <div className="text-break">
+                    <Card.Title>
                         {relay.name}
-                    </Link>
-                </Card.Title>
-                <Card.Subtitle className="text-muted">{relay.url}</Card.Subtitle>
-                <div className="text-muted"><a href={`${pages.getInspector()}?relayUrl=${relay.url}`}>Inspect</a></div>
+                    </Card.Title>
+                    <Card.Subtitle className="text-muted">
+                        <CopyableText text={relay.url} buttonAlignment="right" />
+                    </Card.Subtitle>
+                    {(relay.pubkey && relay.pubkey.length > 5) && (
+                        <div className="text-muted">
+                            <CopyableText text={relay.pubkey} buttonAlignment="right" />
+                        </div>
+                    )}
+                </div>
+                <div className="d-flex flex-row justify-content-end align-items-start">
+                    <div className="text-muted"><a href={`${pages.getInspector()}?relayUrl=${relay.url}`}>Inspect</a></div>
+                </div>
             </div>
             <Card.Body className="pt-0">
                 <Accordion>
                     <Accordion.Item eventKey="0">
+                        <Accordion.Header>
+                            <div className="mr-4">Payment Details</div>
+                            {relay.payment_required ? (
+                                <CurrencyBitcoin size={25} title="payment required" />
+                            ): (
+                                <X size={30} title="payment NOT required"/>
+                            )}
+                        </Accordion.Header>
+                        <Accordion.Body>
+                            {relay.payment_required ? (
+                                <div>
+                                    <div>
+                                        {relay.payments_url ? (
+                                            <a href={relay.payments_url} target="_blank">Payment instructions</a>
+                                        ) : (
+                                            <p>'Payment Instruction Unknown'</p>
+                                        )}
+                                    </div>
+                                    <div>
+                                        {relay.admission_fees_sats && (
+                                            <p>Fee to join (sats): {relay.admission_fees_sats}</p>
+                                        )}
+                                    </div>
+                                    <div>
+                                        {relay.publication_fees_sats && (
+                                            <p>Fee per publication (sats): {relay.publication_fees_sats}</p>
+                                        )}
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="text-muted">No payment required</div>
+                            )}
+                        </Accordion.Body>
+                    </Accordion.Item>
+                </Accordion>
+                <Accordion>
+                    <Accordion.Item eventKey="0">
+                        <Accordion.Header>Status</Accordion.Header>
+                        <Accordion.Body>
+                            <div className="d-flex flew-row justify-content-start align-items-center">
+                                <div className="font-weight-bold me-2">Is active:</div>
+                                <div>
+                                    {relay.last_update_success ? 'Yes' : 'No'}
+                                </div>
+                            </div>
+                            {relay.tracked_since && (
+                                <div className="d-flex flew-row justify-content-start align-items-center">
+                                    <div className="font-weight-bold me-2">Tracking Since:</div>
+                                    <div>
+                                        {humanReadableDateFromISO(relay.tracked_since)}
+                                    </div>
+                                </div>
+                            )}
+                            {relay.last_metadata_update && (
+                                <div className="d-flex flew-row justify-content-start align-items-center">
+                                    <div className="font-weight-bold me-2">Last Metadata Update:</div>
+                                    <div>
+                                        {humanReadableDateTimeFromISO(relay.last_metadata_update)}
+                                    </div>
+                                </div>
+                            )}
+                        </Accordion.Body>
+                    </Accordion.Item>
+                </Accordion>
+                <Accordion>
+                    <Accordion.Item eventKey="0">
                         <Accordion.Header>Relay Software</Accordion.Header>
                         <Accordion.Body>
-                            <p>Pubkey: {relay.pubkey}</p>
-                            <p>Software: {relay.software}</p>
-                            <p>Version: {relay.version}</p>
-                            <p>Supported NIPs: {getSupportedNipsDisplay(relay.supported_nips)}</p>
-                        </Accordion.Body>
-                    </Accordion.Item>
-                </Accordion>
-                <Accordion>
-                    <Accordion.Item eventKey="0">
-                        <Accordion.Header>Payment Details</Accordion.Header>
-                        <Accordion.Body>
-                            <p>Payment Required: {relay.payment_required ? 'Yes' : 'No'}</p>
-                            <p>Payments URL: {relay.payments_url}</p>
-                            <p>Admission Fees (Sats): {relay.admission_fees_sats}</p>
-                            <p>Publication Fees (Sats): {relay.publication_fees_sats}</p>
-                        </Accordion.Body>
-                    </Accordion.Item>
-                </Accordion>
-                <Accordion>
-                    <Accordion.Item eventKey="0">
-                        <Accordion.Header>Tacking Details</Accordion.Header>
-                        <Accordion.Body>
-                            <p>Tracking since: {relay.tracked_since}</p>
-                            <p>Last update: {relay.last_metadata_update}</p>
-                            <p>Last update success: {relay.last_update_success ? 'Yes' : 'No'}</p>
+                            {relay.software && (
+                                <div className="d-flex flew-row justify-content-start align-items-center">
+                                    <div className="font-weight-bold me-2">Software:</div>
+                                    <div>
+                                        {relay.software}
+                                    </div>
+                                </div>
+                            )}
+                            {relay.supported_nips && (
+                                <div className="d-flex flew-row justify-content-start align-items-center">
+                                    <div className="font-weight-bold me-2">Support NIPs:</div>
+                                    <div>
+                                        {getSupportedNipsDisplay(relay.supported_nips)}
+                                    </div>
+                                </div>
+                            )}
                         </Accordion.Body>
                     </Accordion.Item>
                 </Accordion>
