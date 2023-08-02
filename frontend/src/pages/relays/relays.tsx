@@ -1,24 +1,50 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import urls from '../../config/urls';
-import pages from '../../config/pages';
 import Relay from "../../types/relays";
-import { Link } from 'react-router-dom';
 import RelaysList from "../../components/relays/list";
 import { generateFullApiURL} from '../../utils/api'
 import { Card, Form } from "react-bootstrap";
+import LoadingIndicator from '../../components/common/loadingIndicator';
 
 export default function RelayListPage() {
 
   const [relays, setRelays] = useState<Relay[]>([]);
   const [relayFetchError, setRelayFetchError] = useState<string>("");
+  const [fetchingRelays, setFetchingRelays] = useState<boolean>(false);
 
   const [textFilter, setTextFilter] = useState<string>("");
-  const [paymentRequiredFilter, setPaymentRequiredFilter] = useState<string>("");  // "" (no selection), "required", "not-required"
+  const [paymentRequiredFilter, setPaymentRequiredFilter] = useState<string>("");
+  const [debouncedTextFilter, setDebouncedTextFilter] = useState<string>("");  // new state value for the debounced search term
 
+  const prevTextFilter = useRef(textFilter);
+  const prevPaymentRequiredFilter = useRef(paymentRequiredFilter);
+
+  // debounce text filter
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedTextFilter(textFilter);
+    }, 1200);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [textFilter]);
 
   useEffect(() => {
+    if (
+      prevTextFilter.current === textFilter &&
+      prevPaymentRequiredFilter.current === paymentRequiredFilter &&
+      relays.length !== 0
+    ) {
+      return; // Skip calling getRelays if filters have not changed
+    }
+
+    prevTextFilter.current = textFilter;
+    prevPaymentRequiredFilter.current = paymentRequiredFilter;
+
     async function getRelays() {
       try {
+        setFetchingRelays(true)
         const queryParams = new URLSearchParams({
           search: textFilter,
           payment_required: paymentRequiredFilter,
@@ -31,15 +57,17 @@ export default function RelayListPage() {
         }
 
         const relaysRaw = await response.json();
+        setFetchingRelays(false)
         setRelays(relaysRaw);
       } catch (error: any) {
         console.error(`Failed to fetch relays`, error);
+        setFetchingRelays(false)
         setRelayFetchError(error.message);
       }
     }
 
     getRelays();
-  }, [textFilter, paymentRequiredFilter]);
+  }, [debouncedTextFilter, paymentRequiredFilter]);
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -83,7 +111,9 @@ export default function RelayListPage() {
         </div>
       )}
       <div className="mt-3">
-        <RelaysList relays={relays} />
+        {fetchingRelays ? <LoadingIndicator /> : (
+          <RelaysList relays={relays} />
+        )}
       </div>
     </div>
   );
