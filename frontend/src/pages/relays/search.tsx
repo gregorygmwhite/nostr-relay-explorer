@@ -6,7 +6,7 @@ import { generateFullApiURL} from '../../utils/api'
 import { Card, Form } from "react-bootstrap";
 import LoadingIndicator from '../../components/common/loadingIndicator';
 
-export default function RelayListPage() {
+export default function RelaySearchPage() {
 
   const [relays, setRelays] = useState<Relay[]>([]);
   const [relayFetchError, setRelayFetchError] = useState<string>("");
@@ -78,12 +78,11 @@ export default function RelayListPage() {
       <Card className="mt-2 p-4">
           <form onSubmit={handleFormSubmit} style={{ maxWidth: "40rem"}}>
               <Form.Group className="mb-3">
-              <Form.Label>Search</Form.Label>
                 <Form.Control
                   type="text"
                   id="text-search"
                   value={textFilter}
-                  placeholder="name, url, pubkey"
+                  placeholder="Relay name, relay url, relay pubkey"
                   onChange={(e) => setTextFilter(e.target.value)}
                 />
                 <Form.Text className="text-muted">
@@ -112,7 +111,17 @@ export default function RelayListPage() {
       )}
       <div className="mt-3">
         {fetchingRelays ? <LoadingIndicator /> : (
-          <RelaysList relays={relays} />
+          <>
+            {relays.length === 0 ? (
+              <div className="card mt-4 shadow-sm">
+                <div className="card-body">
+                  <p className="card-text">No matching relays</p>
+                </div>
+              </div>
+            ): (
+              <RelaysList relays={relays} />
+            )}
+          </>
         )}
       </div>
     </div>

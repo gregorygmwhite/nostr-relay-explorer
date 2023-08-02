@@ -13,7 +13,8 @@ class RelayFilter(django_filters.FilterSet):
     url = django_filters.CharFilter(lookup_expr='exact')  # Exact match
     search = django_filters.CharFilter(method='filter_search')
     payment_required = django_filters.BooleanFilter()
-    supported_nips = django_filters.CharFilter(method='filter_supported_nips')  # Custom NIPs filter
+    supported_nips = django_filters.CharFilter(method='filter_supported_nips')
+    relay_urls = django_filters.CharFilter(method='filter_relay_urls')
 
     class Meta:
         model = Relay
@@ -21,7 +22,8 @@ class RelayFilter(django_filters.FilterSet):
             'url',
             'payment_required',
             'search',
-            'supported_nips'
+            'supported_nips',
+            'relay_urls',
         ]
 
     def filter_search(self, queryset, name, value):
@@ -42,6 +44,12 @@ class RelayFilter(django_filters.FilterSet):
             queryset = queryset.filter(supported_nips__nip=nip)
 
         return queryset
+
+    def filter_relay_urls(self, queryset, name, value):
+        """Custom filter to filter relays by relay urls."""
+        relay_urls_list = [relay_url for relay_url in value.split(',')]
+
+        return queryset.filter(url__in=relay_urls_list)
 
 
 class RelayListCreateView(generics.ListCreateAPIView):

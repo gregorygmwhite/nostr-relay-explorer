@@ -15,11 +15,14 @@ const NavBarComponent: React.FC = () => {
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="ms-auto">
                         <Nav.Link
+                            href={pages.getRelaySearch()}
+                            className={location.pathname === pages.getRelaySearch() || location.pathname == pages.getHome() ? 'active' : ''}>Search</Nav.Link>
+                        <Nav.Link
                             href={pages.getInspector()}
                             className={location.pathname === pages.getInspector() ? 'active' : ''}>Inspector</Nav.Link>
                         <Nav.Link
-                            href={pages.getRelaysList()}
-                            className={location.pathname === pages.getRelaysList() || location.pathname == pages.getHome() ? 'active' : ''}>Relays</Nav.Link>
+                            href={pages.getRelayLists()}
+                            className={location.pathname === pages.getRelayLists() ? 'active' : ''}>Lists</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
             </Container>
