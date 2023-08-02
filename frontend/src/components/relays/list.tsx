@@ -23,7 +23,7 @@ const RelaysList = ({
     <div className="mt-4">
       {relays === undefined ? (
         <LoadingIndicator />
-      ) : relays.length > 0 ? (
+      ) : relays.length > 0 && (
         <div>
           <div className="d-flex justify-content-between align-items-center mb-3">
             <div className="h5">
@@ -36,7 +36,6 @@ const RelaysList = ({
               Suggest Relay
           </Link>
         </div>
-
           {relays && (
             <Table hover responsive>
               <thead>
@@ -65,12 +64,6 @@ const RelaysList = ({
               </tbody>
             </Table>
           )}
-        </div>
-      ) : (
-        <div className="card mt-4 shadow-sm">
-          <div className="card-body">
-            <p className="card-text">No relays found</p>
-          </div>
         </div>
       )}
     </div>
