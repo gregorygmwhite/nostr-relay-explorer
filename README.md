@@ -53,9 +53,10 @@ make run-frontend
 ```
 
 ## What's next
-1. Add way to discover relays based on their metadata (paid/not paid, community preferences, nips supported, etc)
-2. Make the discovery interface easier to use (I suck at design)
-3. Support more metadata tags (languages, community preferences, link out to posting policy)
+1. Add ability to find relay lists published by certain people (and on certain relays)
+2. Add ability to login with Alby or nos2x and actually manage your relays from this tool
+3. Add way to discover relays based on their metadata (paid/not paid, community preferences, nips supported, etc)
+4. Support more metadata tags (languages, community preferences, link out to posting policy)
 
 ## Contributing
 
