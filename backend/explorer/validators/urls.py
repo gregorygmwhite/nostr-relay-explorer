@@ -11,3 +11,10 @@ def validate_ws_url(value):
         validate_url(value)
     except ValidationError:
         raise ValidationError(_('%(value)s is not a valid URL'), params={'value': value})
+
+def is_valid_ws_url(value):
+    try:
+        validate_ws_url(value)
+        return True
+    except ValidationError:
+        return False
