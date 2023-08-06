@@ -47,3 +47,47 @@ export const NOSTR_KINDS = {
     31989: "Handler Recommendation (31989)",
     31990: "Handler Information (31990)",
 }
+
+type RelayNips = {
+    [key: number]: string;
+  };
+
+
+export const RELAY_NIPS: RelayNips = {
+    1: "Basics",
+    2: "Contact list",
+    4: "DMs",
+    9: "Event deletion",
+    11: "Relay metadata",
+    12: "Generic tag queries",
+    15: "Nostr marketplace",
+    16: "Replaceable or ephemeral events",
+    20: "Relays communicating success of client command",
+    22: "Event created_at time limits",
+    26: "Delegated event signing",
+    28: "Public chat",
+    33: "Parameterized replaceable events",
+    40: "Expiring events",
+    50: "Human readable search queries",
+    52: "Calendar events",
+    56: "Reporting",
+    57: "Lightning zaps",
+    99: "Classified listings",
+}
+
+export const SPECIAL_RELAY_NIPS = [
+    9, // Event deletion
+    15, // Nostr marketplace
+    16, // Replaceable or ephemeral events
+    20, // Relays communicating success of client command
+    26, // Delegated event signing
+    28, // Public chat
+    33, // Parameterized replaceable events
+    40, // Expiring events
+    50, // Human readable search queries
+    52, // Calendar events
+    56, // Reporting
+    57, // Lightning zaps
+    99, // Classified listings
+]
+

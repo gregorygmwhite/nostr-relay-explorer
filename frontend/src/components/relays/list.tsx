@@ -47,7 +47,7 @@ const RelaysList = ({
               </thead>
               <tbody>
                 {relays.map((relay: Relay) => (
-                  <tr>
+                  <tr key={relay.id}>
                     <td>
                       <Link to={pages.getRelayView(relay.id)}>
                         {relay.name}

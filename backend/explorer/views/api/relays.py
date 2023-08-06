@@ -1,12 +1,17 @@
+import logging
 import django_filters
 from rest_framework import generics
 from django_filters.rest_framework import DjangoFilterBackend
 from django.core.exceptions import ValidationError
-from django.db.models import Q
+from django.db.models import Q, F
 from django.db import transaction
 
 from explorer.models import Relay
 from explorer.serializers import RelaySerializer
+from explorer.tasks import update_metadata_for_relay
+from explorer.validators import is_valid_ws_url
+
+logger = logging.getLogger(__name__)
 
 
 class RelayFilter(django_filters.FilterSet):
@@ -49,7 +54,36 @@ class RelayFilter(django_filters.FilterSet):
         """Custom filter to filter relays by relay urls."""
         relay_urls_list = [relay_url for relay_url in value.split(',')]
 
+        self._save_new_relays(relay_urls_list)
+
         return queryset.filter(url__in=relay_urls_list)
+
+    def _save_new_relays(self, relay_urls_list):
+        new_relays_to_save = []
+
+        for relay_url in relay_urls_list:
+            if (is_valid_ws_url(relay_url) is False):
+                logger.error("Invalid relay url: %s", relay_url)
+                continue
+            try:
+                Relay.objects.get(url=relay_url)
+            except Relay.DoesNotExist:
+                new_relay = Relay(url=relay_url, name=relay_url)
+                new_relays_to_save.append(new_relay)
+
+        # Save all the new Relay objects in a single transaction
+        with transaction.atomic():
+            try:
+                Relay.objects.bulk_create(new_relays_to_save)
+            except Exception as e:
+                logger.error("Failed to create and save new relays: %s", str(e))
+
+            for relay in new_relays_to_save:
+                try:
+                    relay.refresh_from_db()
+                    update_metadata_for_relay(relay.id)
+                except Exception as e:
+                    logger.error("Failed to schedule metadata update for new relay: %s", str(e))
 
 
 class RelayListCreateView(generics.ListCreateAPIView):
@@ -57,6 +91,24 @@ class RelayListCreateView(generics.ListCreateAPIView):
     serializer_class = RelaySerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = RelayFilter
+    ordering_fields = [
+        'name',
+        'url',
+        'activity_assessment',
+    ]
+    ordering = 'name'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        ordering = self.request.query_params.get('ordering', self.ordering)
+
+        if ordering not in self.ordering_fields:
+            ordering = self.ordering
+
+        queryset = queryset.order_by(F(ordering).asc(nulls_last=True))
+
+        return queryset
+
 
     def perform_create(self, serializer):
         url = serializer.validated_data.get('url', None)
