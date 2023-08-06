@@ -31,14 +31,26 @@ export default function RelaySearchPage() {
   const prevOrderingChoice = useRef(orderingChoice);
   const isFirstRender = useRef(true);
 
+  function clearContext() {
+    setRelayFetchError("");
+    setRelays([]);
+    setFetchingRelays(false);
+  }
+
 
   async function getRelays() {
     try {
+      clearContext()
       setFetchingRelays(true);
+
+      let parsedSupportedNipsFilter = supportedNipsFilter.filter((nip: string) => {
+        return nip !== "";
+      });
+
       const queryParams = new URLSearchParams({
-        search: debouncedTextFilter,  // use debounced value here
+        search: debouncedTextFilter,
         payment_required: paymentRequiredFilter,
-        supported_nips: supportedNipsFilter.join(","),
+        supported_nips: parsedSupportedNipsFilter.join(","),
         ordering: orderingChoice,
       });
 
@@ -135,8 +147,8 @@ export default function RelaySearchPage() {
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Supported features</Form.Label>
-                <Form.Select onChange={handleSupportedNipsChange} defaultValue={[]} multiple>
-                  <option key={""} value={[]}>Any</option>
+                <Form.Select onChange={handleSupportedNipsChange} defaultValue={[""]} multiple>
+                  <option key={""} value={""}>Any</option>
                   {SPECIAL_RELAY_NIPS.map((nip) => (
                       <option key={nip} value={nip}>{`${RELAY_NIPS[nip]} (NIP ${nip})`}</option>
                   ))}
