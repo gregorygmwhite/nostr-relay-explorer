@@ -13,9 +13,11 @@ import { isValidPubKey } from '../../utils/publicKeys';
 export default function RelayListsPage() {
   const defaultLimit = 100;
 
+  const [fetchingRelays, setFetchingRelays] = useState<boolean>(false);
+  const [hasEverStartedFetchingRelays, setHasEverStartedFetchingRelays] = useState<boolean>(false);
+
   const [relays, setRelays] = useState<Relay[]>([]);
   const [relayFetchError, setRelayFetchError] = useState<string>("");
-  const [fetchingRelays, setFetchingRelays] = useState<boolean>(false);
 
   const [nip5Filter, setNip5Filter] = useState<string>("");
   const [nip5RelayList, setNip5RelayList] = useState<string[]>([]);  // new state value for the debounced search term
@@ -33,6 +35,9 @@ export default function RelayListsPage() {
     setRelays([])
     setNip5RelayList([])
     setNip5PubKey("")
+    setUserFilter("")
+    setRelayURLFilter("")
+    setHasEverStartedFetchingRelays(false)
   }
 
   ////////
@@ -80,6 +85,7 @@ export default function RelayListsPage() {
   async function getRelaysFromBackend() {
     try {
       setFetchingRelays(true)
+      setHasEverStartedFetchingRelays(true)
       const queryParams = new URLSearchParams({
         nip5Filter: nip5Filter, // ignored by backend
         relay_urls: nip5RelayList.join(","), // actually used by backend
@@ -199,6 +205,7 @@ export default function RelayListsPage() {
   async function getRelayListForUserAndRelay() {
     resetContext();
     setFetchingRelays(true)
+    setHasEverStartedFetchingRelays(true)
 
     let pubkey;
     if (userFilter.includes("@")) {
@@ -248,14 +255,7 @@ export default function RelayListsPage() {
 
   const handleTabChange = (tabName: string) => {
     setActiveTab(tabName);
-    if (tabName === "nip5") {
-      // If the NIP 5 tab is active, reset the user-search and relay-url-search inputs
-      setUserFilter("");
-      setRelayURLFilter("");
-    } else {
-      // If the other tab is active, reset the NIP 5 address input
-      setNip5Filter("");
-    }
+    resetContext()
   };
 
 
@@ -352,11 +352,15 @@ export default function RelayListsPage() {
         ) : (
           <>
             {(relays.length === 0 && relayFetchError === "") ? (
-              <div className="card mt-4 shadow-sm">
-                <div className="card-body">
-                  <p className="card-text">No matching relays</p>
+              <>
+               {(hasEverStartedFetchingRelays && (
+                <div className="card mt-4 shadow-sm">
+                  <div className="card-body">
+                    <p className="card-text">No matching relays</p>
+                  </div>
                 </div>
-              </div>
+               ))}
+              </>
             ) : (
               <RelaysList relays={relays} />
             )}
