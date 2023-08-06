@@ -93,7 +93,8 @@ class RelayListCreateView(generics.ListCreateAPIView):
     filterset_class = RelayFilter
     ordering_fields = [
         'name',
-        'url'
+        'url',
+        'activity_assessment',
     ]
     ordering = 'name'
 

@@ -19,10 +19,11 @@ export default function RelaySearchPage() {
   const [debouncedTextFilter, setDebouncedTextFilter] = useState<string>("");  // new state value for the debounced search term
 
   const ORDERING_CHOICES = {
+    "activity_assessment": "Usage",
     "name": "Name",
     "url": "Relay URL",
   }
-  const [orderingChoice, setOrderingChoice] = useState<string>("name");
+  const [orderingChoice, setOrderingChoice] = useState<string>("activity_assessment");
 
   const prevTextFilter = useRef(textFilter);
   const prevPaymentRequiredFilter = useRef(paymentRequiredFilter);

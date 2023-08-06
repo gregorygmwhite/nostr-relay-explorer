@@ -5,6 +5,14 @@ from explorer.validators.urls import validate_ws_url
 from explorer.utils import get_metadata_from_relay_url
 from meta.utils import normalize_to_sats
 from .nip import NIP
+
+from pynostr.relay import Relay as PynostrRelay
+from pynostr.filters import FiltersList, Filters
+from pynostr.event import EventKind
+from pynostr.base_relay import RelayPolicy
+from pynostr.message_pool import MessagePool
+import tornado.ioloop
+from tornado import gen
 import uuid
 
 
@@ -126,6 +134,12 @@ class Relay(models.Model):
         default=True,
     )
 
+    # number of seconds between the first and last zap event in the last assessment query
+    activity_assessment = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     def __str__(self):
         return "{} - {} - created: {}".format(self.name, self.url, self.tracked_since)
 
@@ -240,3 +254,54 @@ class Relay(models.Model):
         else:
             # You may want to raise an exception or handle this case differently.
             raise ValueError("All supported NIPs must be integers.")
+
+
+    def update_activity_assessment(self):
+        # connect to relay
+        # query for all zap events with a limit of 300
+        # measure the distance between the latest and the oldest event
+        # save as the activity assessment value
+
+        message_pool = MessagePool(first_response_only=False)
+        policy = RelayPolicy()
+        io_loop = tornado.ioloop.IOLoop.current()
+        r = PynostrRelay(
+            self.url,
+            message_pool,
+            io_loop,
+            policy,
+            timeout=3,
+        )
+        filters = FiltersList([Filters(kinds=[9735], limit=300)]) # zap receipts
+        subscription_id = uuid.uuid1().hex
+
+        r.add_subscription(subscription_id, filters)
+
+        try:
+            io_loop.run_sync(r.connect)
+        except gen.Return:
+            pass
+        io_loop.stop()
+
+        events = []
+        while message_pool.has_notices():
+            notice_msg = message_pool.get_notice()
+            print(notice_msg.content)
+        while message_pool.has_events():
+            event_msg = message_pool.get_event()
+            print(event_msg.event.content)
+            events.append(event_msg.event)
+
+        if len(events) <= 50:
+            return
+
+        earliest_event = events[0].created_at
+        latest_event = events[0].created_at
+        for event in events:
+            if event.created_at < earliest_event:
+                earliest_event = event.created_at
+            if event.created_at > latest_event:
+                latest_event = event.created_at
+
+        self.activity_assessment = latest_event - earliest_event
+        self.save()
