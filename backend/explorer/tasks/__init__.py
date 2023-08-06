@@ -4,5 +4,5 @@ from .update_metadata import (
 )
 
 from .update_relay_activity_assessment import (
-    update_activity_assessment_for_all_relays
+    update_activity_assessment_for_all_relays,
 )

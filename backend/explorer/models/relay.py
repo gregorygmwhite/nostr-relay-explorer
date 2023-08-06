@@ -254,4 +254,3 @@ class Relay(models.Model):
         else:
             # You may want to raise an exception or handle this case differently.
             raise ValueError("All supported NIPs must be integers.")
-

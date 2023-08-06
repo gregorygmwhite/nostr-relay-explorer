@@ -18,5 +18,3 @@ def update_metadata_for_all_relays():
 def update_metadata_for_relay(relay_id):
     relay = Relay.objects.get(id=relay_id)
     relay.update_metadata()
-
-
