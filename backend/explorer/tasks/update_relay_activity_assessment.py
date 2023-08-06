@@ -72,6 +72,8 @@ def _update_relay_activity_assessment_for_relay(relay):
 
     if len(events) <10:
         print("Not enough events {} for relay {}".format(len(events), relay.url))
+        relay.activity_assessment = None
+        relay.save()
         return
 
     print("Updating activity assessment for relay", relay.url)
@@ -82,6 +84,13 @@ def _update_relay_activity_assessment_for_relay(relay):
             earliest_event = event.created_at
         if event.created_at > latest_event:
             latest_event = event.created_at
+
+    now_epoch = int(time.time())
+    if latest_event < (now_epoch - 86400):
+        print("Latest event is more than 24 hours old for relay {}".format(relay.url))
+        relay.activity_assessment = None
+        relay.save()
+        return
 
     activity_assessment = latest_event - earliest_event
     relay.activity_assessment = activity_assessment
