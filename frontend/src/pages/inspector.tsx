@@ -191,7 +191,7 @@ const InspectorPage = () => {
                 <option key={kind} value={kind}>{kindDisplay}</option>
             ))}
           </Form.Select>
-          <Form.Text className="text-muted">List of kinds and what they mean can be found <a href="https://github.com/nostr-protocol/nips" className="text-info">here</a></Form.Text>
+          <Form.Text className="text-muted">List of kinds and what they mean can be found <a href="https://github.com/nostr-protocol/nips" target="_blank" className="text-info">here</a></Form.Text>
         </FormGroup>
 
           <div className="mt-3 w-100 d-flex flex-row-reverse">

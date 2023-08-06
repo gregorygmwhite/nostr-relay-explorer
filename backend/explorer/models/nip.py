@@ -1,4 +1,6 @@
 from django.db import models
+# NIPS
+# https://github.com/nostr-protocol/nips
 
 class NIP(models.Model):
     nip = models.IntegerField(unique=True)

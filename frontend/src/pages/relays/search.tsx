@@ -5,6 +5,7 @@ import RelaysList from "../../components/relays/list";
 import { generateFullApiURL} from '../../utils/api'
 import { Card, Form } from "react-bootstrap";
 import LoadingIndicator from '../../components/common/loadingIndicator';
+import { SPECIAL_RELAY_NIPS, RELAY_NIPS } from '../../config/consts';
 
 export default function RelaySearchPage() {
 
@@ -12,12 +13,14 @@ export default function RelaySearchPage() {
   const [relayFetchError, setRelayFetchError] = useState<string>("");
   const [fetchingRelays, setFetchingRelays] = useState<boolean>(false);
 
+  const [supportedNipsFilter, setSupportedNipsFilter] = useState<string[]>([]);
   const [textFilter, setTextFilter] = useState<string>("");
   const [paymentRequiredFilter, setPaymentRequiredFilter] = useState<string>("");
   const [debouncedTextFilter, setDebouncedTextFilter] = useState<string>("");  // new state value for the debounced search term
 
   const prevTextFilter = useRef(textFilter);
   const prevPaymentRequiredFilter = useRef(paymentRequiredFilter);
+  const prevSupportedNipsFilter = useRef(supportedNipsFilter);
 
   // debounce text filter
   useEffect(() => {
@@ -34,6 +37,7 @@ export default function RelaySearchPage() {
     if (
       prevTextFilter.current === textFilter &&
       prevPaymentRequiredFilter.current === paymentRequiredFilter &&
+      prevSupportedNipsFilter.current === supportedNipsFilter &&
       relays.length !== 0
     ) {
       return; // Skip calling getRelays if filters have not changed
@@ -41,6 +45,7 @@ export default function RelaySearchPage() {
 
     prevTextFilter.current = textFilter;
     prevPaymentRequiredFilter.current = paymentRequiredFilter;
+    prevSupportedNipsFilter.current = supportedNipsFilter;
 
     async function getRelays() {
       try {
@@ -48,7 +53,11 @@ export default function RelaySearchPage() {
         const queryParams = new URLSearchParams({
           search: textFilter,
           payment_required: paymentRequiredFilter,
+          supported_nips: supportedNipsFilter.join(","),
         });
+
+        debugger
+
         const fullAPIRoute = generateFullApiURL(`${urls.api.relaysList}?${queryParams}`);
         const response = await fetch(fullAPIRoute);
 
@@ -67,11 +76,16 @@ export default function RelaySearchPage() {
     }
 
     getRelays();
-  }, [debouncedTextFilter, paymentRequiredFilter]);
+  }, [debouncedTextFilter, paymentRequiredFilter, supportedNipsFilter]);
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   };
+
+  const handleSupportedNipsChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedOptions = Array.from(event.target.selectedOptions, option => option.value);
+    setSupportedNipsFilter(selectedOptions);
+};
 
   return (
     <div className="container mt-2">
@@ -100,6 +114,16 @@ export default function RelaySearchPage() {
                     <option value="true">Required</option>
                     <option value="false">Not Required</option>
                 </Form.Select>
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Supported features</Form.Label>
+                <Form.Select onChange={handleSupportedNipsChange} defaultValue="" multiple>
+                  <option key={""} value={[]}>Any</option>
+                  {SPECIAL_RELAY_NIPS.map((nip) => (
+                      <option key={nip} value={nip}>{`${RELAY_NIPS[nip]} (NIP ${nip})`}</option>
+                  ))}
+                </Form.Select>
+                <Form.Text className="text-muted">List of NIPs can be found <a href="https://github.com/nostr-protocol/nips" target="_blank" className="text-info">here</a></Form.Text>
               </Form.Group>
 
           </form>
