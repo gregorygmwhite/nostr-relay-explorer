@@ -178,7 +178,6 @@ export default function RelayListsPage() {
 
             // get events from the relay
             const eventsRaw = await relay.list(queries);
-            debugger;
             if (eventsRaw.length === 0) {
               throw new Error(`No events found for pubkey ${pubkey} and relay ${relayURL}`)
             }
