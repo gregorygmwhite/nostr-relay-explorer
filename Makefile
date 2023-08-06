@@ -7,10 +7,10 @@ rebuild:
 	docker-compose build --no-cache
 
 bash-backend:
-	docker-compose exec backend sh
+	docker-compose exec backend /bin/bash
 
 bash-frontend:
-	docker-compose exec frontend sh
+	docker-compose exec frontend /bin/bash
 
 run-dev-all:
 	docker-compose up

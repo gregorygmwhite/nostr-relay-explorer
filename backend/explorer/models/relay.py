@@ -6,13 +6,6 @@ from explorer.utils import get_metadata_from_relay_url
 from meta.utils import normalize_to_sats
 from .nip import NIP
 
-from pynostr.relay import Relay as PynostrRelay
-from pynostr.filters import FiltersList, Filters
-from pynostr.event import EventKind
-from pynostr.base_relay import RelayPolicy
-from pynostr.message_pool import MessagePool
-import tornado.ioloop
-from tornado import gen
 import uuid
 
 

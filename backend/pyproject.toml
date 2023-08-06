@@ -17,8 +17,7 @@ huey = "^2.4.5"
 redis = "^4.6.0"
 django-extensions = "^3.2.3"
 django-filter = "^23.2"
-pynostr = {extras = ["websocket-client"], version = "^0.6.2"}
-tornado = "^6.3.2"
+nostr = "^0.0.2"
 
 [tool.poetry.group.dev.dependencies]
 coverage = "^6.5.0"
