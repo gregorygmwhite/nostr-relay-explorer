@@ -3,7 +3,7 @@ import django_filters
 from rest_framework import generics
 from django_filters.rest_framework import DjangoFilterBackend
 from django.core.exceptions import ValidationError
-from django.db.models import Q
+from django.db.models import Q, F
 from django.db import transaction
 
 from explorer.models import Relay
@@ -91,6 +91,23 @@ class RelayListCreateView(generics.ListCreateAPIView):
     serializer_class = RelaySerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = RelayFilter
+    ordering_fields = [
+        'name',
+        'url'
+    ]
+    ordering = 'name'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        ordering = self.request.query_params.get('ordering', self.ordering)
+
+        if ordering not in self.ordering_fields:
+            ordering = self.ordering
+
+        queryset = queryset.order_by(F(ordering).asc(nulls_last=True))
+
+        return queryset
+
 
     def perform_create(self, serializer):
         url = serializer.validated_data.get('url', None)

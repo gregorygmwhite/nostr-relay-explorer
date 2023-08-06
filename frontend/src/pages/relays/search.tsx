@@ -18,9 +18,46 @@ export default function RelaySearchPage() {
   const [paymentRequiredFilter, setPaymentRequiredFilter] = useState<string>("");
   const [debouncedTextFilter, setDebouncedTextFilter] = useState<string>("");  // new state value for the debounced search term
 
+  const ORDERING_CHOICES = {
+    "name": "Name",
+    "url": "Relay URL",
+  }
+  const [orderingChoice, setOrderingChoice] = useState<string>("name");
+
   const prevTextFilter = useRef(textFilter);
   const prevPaymentRequiredFilter = useRef(paymentRequiredFilter);
   const prevSupportedNipsFilter = useRef(supportedNipsFilter);
+  const prevOrderingChoice = useRef(orderingChoice);
+  const isFirstRender = useRef(true);
+
+
+  async function getRelays() {
+    try {
+      setFetchingRelays(true);
+      const queryParams = new URLSearchParams({
+        search: debouncedTextFilter,  // use debounced value here
+        payment_required: paymentRequiredFilter,
+        supported_nips: supportedNipsFilter.join(","),
+        ordering: orderingChoice,
+      });
+
+      const fullAPIRoute = generateFullApiURL(`${urls.api.relaysList}?${queryParams}`);
+      const response = await fetch(fullAPIRoute);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const relaysRaw = await response.json();
+      setFetchingRelays(false);
+      setRelays(relaysRaw);
+    } catch (error: any) {
+      console.error(`Failed to fetch relays`, error);
+      setFetchingRelays(false);
+      setRelayFetchError(error.message);
+    }
+  }
+
 
   // debounce text filter
   useEffect(() => {
@@ -34,49 +71,29 @@ export default function RelaySearchPage() {
   }, [textFilter]);
 
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
     if (
-      prevTextFilter.current === textFilter &&
+      prevTextFilter.current === debouncedTextFilter &&
       prevPaymentRequiredFilter.current === paymentRequiredFilter &&
       prevSupportedNipsFilter.current === supportedNipsFilter &&
+      prevOrderingChoice.current === orderingChoice &&
       relays.length !== 0
     ) {
       return; // Skip calling getRelays if filters have not changed
     }
 
-    prevTextFilter.current = textFilter;
+    prevTextFilter.current = debouncedTextFilter;
     prevPaymentRequiredFilter.current = paymentRequiredFilter;
     prevSupportedNipsFilter.current = supportedNipsFilter;
-
-    async function getRelays() {
-      try {
-        setFetchingRelays(true)
-        const queryParams = new URLSearchParams({
-          search: textFilter,
-          payment_required: paymentRequiredFilter,
-          supported_nips: supportedNipsFilter.join(","),
-        });
-
-        debugger
-
-        const fullAPIRoute = generateFullApiURL(`${urls.api.relaysList}?${queryParams}`);
-        const response = await fetch(fullAPIRoute);
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const relaysRaw = await response.json();
-        setFetchingRelays(false)
-        setRelays(relaysRaw);
-      } catch (error: any) {
-        console.error(`Failed to fetch relays`, error);
-        setFetchingRelays(false)
-        setRelayFetchError(error.message);
-      }
-    }
+    prevOrderingChoice.current = orderingChoice;
 
     getRelays();
-  }, [debouncedTextFilter, paymentRequiredFilter, supportedNipsFilter]);
+  }, [debouncedTextFilter, paymentRequiredFilter, supportedNipsFilter, orderingChoice]);
+
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -117,7 +134,7 @@ export default function RelaySearchPage() {
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Supported features</Form.Label>
-                <Form.Select onChange={handleSupportedNipsChange} defaultValue="" multiple>
+                <Form.Select onChange={handleSupportedNipsChange} defaultValue={[]} multiple>
                   <option key={""} value={[]}>Any</option>
                   {SPECIAL_RELAY_NIPS.map((nip) => (
                       <option key={nip} value={nip}>{`${RELAY_NIPS[nip]} (NIP ${nip})`}</option>
@@ -125,7 +142,6 @@ export default function RelaySearchPage() {
                 </Form.Select>
                 <Form.Text className="text-muted">List of NIPs can be found <a href="https://github.com/nostr-protocol/nips" target="_blank" className="text-info">here</a></Form.Text>
               </Form.Group>
-
           </form>
       </Card>
       {relayFetchError && (
@@ -143,7 +159,22 @@ export default function RelaySearchPage() {
                 </div>
               </div>
             ): (
-              <RelaysList relays={relays} />
+              <>
+                <Form.Group style={{ maxWidth: "10rem" }}>
+                  <Form.Label>Order by</Form.Label>
+                  <Form.Select
+                    aria-label="Order by"
+                    value={orderingChoice}
+                    onChange={(e) => setOrderingChoice(e.target.value)}
+                  >
+                    {Object.entries(ORDERING_CHOICES).map(([key, value]) => (
+                      <option key={key} value={key}>{value}</option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+
+                <RelaysList relays={relays} />
+              </>
             )}
           </>
         )}
