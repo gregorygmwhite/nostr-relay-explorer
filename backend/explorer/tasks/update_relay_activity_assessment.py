@@ -1,3 +1,4 @@
+import websocket
 import logging
 import time
 import uuid
@@ -25,7 +26,10 @@ logger = logging.getLogger(__name__)
 def update_activity_assessment_for_all_relays():
     relays = Relay.objects.all()
     for relay in relays:
-        update_relay_activity_assessment_for_relay(relay.id)
+        try:
+            _update_relay_activity_assessment_for_relay(relay)
+        except Exception as e:
+            print("Failed to update activity assessment for relay {}".format(relay.url), str(e))
 
 
 @djhuey.db_task()
@@ -49,12 +53,15 @@ def _update_relay_activity_assessment_for_relay(relay):
     relay_manager.add_relay(relay.url)
 
     relay_manager.add_subscription(subscription_id, filters)
-    relay_manager.open_connections({"cert_reqs": ssl.CERT_NONE}) # NOTE: This disables ssl certificate verification
-    time.sleep(1.25) # allow the connections to open
 
-    message = json.dumps(request)
-    relay_manager.publish_message(message)
-    time.sleep(1) # allow the messages to send
+    try:
+        relay_manager.open_connections({"cert_reqs": ssl.CERT_NONE})
+        time.sleep(2)
+        message = json.dumps(request)
+        relay_manager.publish_message(message)
+        time.sleep(1) # allow the messages to send
+    except websocket._exceptions.WebSocketConnectionClosedException as e:
+        logger.error("WebSocket connection was closed: %s", e)
 
     events = []
     while relay_manager.message_pool.has_events():
