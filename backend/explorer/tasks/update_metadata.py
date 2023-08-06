@@ -19,21 +19,4 @@ def update_metadata_for_relay(relay_id):
     relay = Relay.objects.get(id=relay_id)
     relay.update_metadata()
 
-@djhuey.db_periodic_task(
-    crontab(
-        # Twice a day (every 12 hours)
-        minute="0",
-        hour="*/12",
-    )
-)
-def update_activity_assessment_for_all_relays():
-    relays = Relay.objects.all()
-    for relay in relays:
-        update_activity_assessment_for_relay(relay.id)
-
-@djhuey.db_task()
-def update_activity_assessment_for_relay(relay_id):
-    relay = Relay.objects.get(id=relay_id)
-    relay.update_activity_assessment()
-
 
