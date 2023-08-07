@@ -62,7 +62,7 @@ def _update_relay_activity_assessment_for_relay(relay):
         time.sleep(2)
         message = json.dumps(request)
         relay_manager.publish_message(message)
-        time.sleep(1) # allow the messages to send
+        time.sleep(2) # allow the messages to send
     except websocket._exceptions.WebSocketConnectionClosedException as e:
         logger.error("WebSocket connection was closed: %s", e)
 
@@ -73,7 +73,7 @@ def _update_relay_activity_assessment_for_relay(relay):
 
     relay_manager.close_connections()
 
-    if len(events) <100:
+    if len(events) < 50:
         print("Not enough events {} for relay {}".format(len(events), relay.url))
         relay.activity_assessment = None
         relay.save()
