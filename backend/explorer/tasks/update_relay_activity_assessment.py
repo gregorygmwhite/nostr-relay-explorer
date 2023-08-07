@@ -25,7 +25,11 @@ logger = logging.getLogger(__name__)
 )
 def update_activity_assessment_for_all_relays():
     relays = Relay.objects.all()
-    for relay in relays:
+    relays_count = relays.count()
+    for index, relay in enumerate(relays):
+        print("Starting update of relay: {} - {} of {}".format(
+            relay.url, index, (relays_count - 1)
+        ))
         try:
             _update_relay_activity_assessment_for_relay(relay)
         except Exception as e:
@@ -49,7 +53,6 @@ def _update_relay_activity_assessment_for_relay(relay):
     request.extend(filters.to_json_array())
 
     relay_manager = RelayManager()
-    print("Adding relay manager:", relay.url)
     relay_manager.add_relay(relay.url)
 
     relay_manager.add_subscription(subscription_id, filters)
@@ -76,7 +79,6 @@ def _update_relay_activity_assessment_for_relay(relay):
         relay.save()
         return
 
-    print("Updating activity assessment for relay", relay.url)
     earliest_event = events[0].created_at
     latest_event = events[0].created_at
     for event in events:
@@ -94,6 +96,7 @@ def _update_relay_activity_assessment_for_relay(relay):
 
     activity_assessment = latest_event - earliest_event
     relay.activity_assessment = activity_assessment
+    print("Updating activity assessment for relay {} - {}".format(relay.url, activity_assessment))
     relay.save()
 
     return activity_assessment
