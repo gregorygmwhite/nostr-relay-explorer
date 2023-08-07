@@ -33,6 +33,8 @@ def update_activity_assessment_for_all_relays():
         try:
             _update_relay_activity_assessment_for_relay(relay)
         except Exception as e:
+            relay.activity_assessment = None
+            relay.save()
             print("Failed to update activity assessment for relay {}".format(relay.url), str(e))
 
 
@@ -44,6 +46,8 @@ def update_relay_activity_assessment_for_relay(relay_id):
 
     except Exception as e:
         print("Failed to update activity assessment for relay {}".format(relay.url), str(e))
+        relay.activity_assessment = None
+        relay.save()
         raise e
 
 def _update_relay_activity_assessment_for_relay(relay):
@@ -74,10 +78,7 @@ def _update_relay_activity_assessment_for_relay(relay):
     relay_manager.close_connections()
 
     if len(events) < 50:
-        print("Not enough events {} for relay {}".format(len(events), relay.url))
-        relay.activity_assessment = None
-        relay.save()
-        return
+        raise Exception("Not enough events {} for relay {}".format(len(events), relay.url))
 
     earliest_event = events[0].created_at
     latest_event = events[0].created_at
@@ -89,10 +90,7 @@ def _update_relay_activity_assessment_for_relay(relay):
 
     now_epoch = int(time.time())
     if latest_event < (now_epoch - 86400):
-        print("Latest event is more than 24 hours old for relay {}".format(relay.url))
-        relay.activity_assessment = None
-        relay.save()
-        return
+        raise Exception("Latest event is more than 24 hours old for relay {}".format(relay.url))
 
     activity_assessment = latest_event - earliest_event
     relay.activity_assessment = activity_assessment
