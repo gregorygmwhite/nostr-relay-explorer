@@ -15,6 +15,11 @@ class RelayQueryset(models.QuerySet):
             active_tracking=is_being_tracked,
         )
 
+    def last_update_succeeded(self, last_update_succeeded=True):
+        return self.filter(
+            last_update_success=last_update_succeeded,
+        )
+
 class RelayManager(models.Manager.from_queryset(
         RelayQueryset,
     )):

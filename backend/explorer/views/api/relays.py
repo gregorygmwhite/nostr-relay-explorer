@@ -127,5 +127,5 @@ class RelayListCreateView(generics.ListCreateAPIView):
 
 class RelayRetrieveView(generics.RetrieveAPIView):
     lookup_field = 'id'
-    queryset = Relay.objects.is_being_tracked()
+    queryset = Relay.objects.last_update_succeeded()
     serializer_class = RelaySerializer
