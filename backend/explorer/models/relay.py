@@ -153,6 +153,7 @@ class Relay(models.Model):
             self.last_update_success = False
             self.last_metadata_update = timezone.now()
             self.save()
+
         if self.name is None or self.name == "":
             self.name = self.url
             self.save()
@@ -199,6 +200,7 @@ class Relay(models.Model):
         self.full_metadata = metadata
         self.last_metadata_update = timezone.now()
         self.last_update_success = True
+        self.actively_tracking = True
         self.save()
 
     def deserialize_fees(self, fees_dict):

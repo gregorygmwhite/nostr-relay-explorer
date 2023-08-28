@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Navbar from './components/nav/nav';
+import HomePage from './pages/home';
 import InspectorPage from './pages/inspector';
 import RelaySearchPage from './pages/relays/search';
 import RelayListsPage from './pages/relays/lists';
@@ -13,7 +14,7 @@ const App: React.FC = () => {
         <Router>
             <Navbar />
             <Routes>
-              <Route path={pages.getHome()} element={<RelaySearchPage />} />
+              <Route path={pages.getHome()} element={<HomePage />} />
               <Route path={pages.getInspector()} element={<InspectorPage />} />
               <Route path={pages.getRelaySearch()} element={<RelaySearchPage />} />
               <Route path={pages.getRelaysCreate()} element={<RelayCreatePage />} />

@@ -42,7 +42,7 @@ In order to have the latest code, db schema, and run the application these are t
 ### Backend deployment
 ```bash
 make build
-make migrate
+make reset-db
 make run-backend
 ```
 
