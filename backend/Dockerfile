@@ -13,7 +13,7 @@ RUN if [ "env-$env" = "env-production" ] ; then poetry install --no-dev --no-int
 COPY . /app
 
 # Static files
-# RUN DJANGO_ENVIRONMENT=build DJANGO_SECRET_KEY=none python manage.py collectstatic --no-input
+RUN DJANGO_ENVIRONMENT=build DJANGO_SECRET_KEY=none python manage.py collectstatic --no-input
 
 ENV DJANGO_ENVIRONMENT $env
 
