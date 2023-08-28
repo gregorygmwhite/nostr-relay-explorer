@@ -18,6 +18,7 @@ redis = "^4.6.0"
 django-extensions = "^3.2.3"
 django-filter = "^23.2"
 nostr = "^0.0.2"
+whitenoise = "^6.5.0"
 
 [tool.poetry.group.dev.dependencies]
 coverage = "^6.5.0"
