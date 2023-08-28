@@ -154,6 +154,15 @@ CORS_ALLOWED_ORIGINS = [
     FRONTEND_URL,
 ]
 
+CSRF_COOKIE_DOMAIN = os.getenv("BACKEND_DOMAIN", default="localhost")
+SESSION_COOKIE_DOMAIN = CSRF_COOKIE_DOMAIN
+
+CSRF_COOKIE_SECURE = False if IS_LOCALHOST else True
+SESSION_COOKIE_SECURE = False if IS_LOCALHOST else True
+
+LOGIN_REDIRECT_URL = '/admin'
+LOGOUT_REDIRECT_URL = '/admin'
+
 HUEY = {
     "name": "main",
     # Task polling
