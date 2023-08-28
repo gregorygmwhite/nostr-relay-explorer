@@ -87,7 +87,7 @@ class RelayFilter(django_filters.FilterSet):
 
 
 class RelayListCreateView(generics.ListCreateAPIView):
-    queryset = Relay.objects.is_being_tracked()
+    queryset = Relay.objects.last_update_succeeded()
     serializer_class = RelaySerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = RelayFilter
