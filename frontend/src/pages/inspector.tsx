@@ -1,6 +1,6 @@
 import { useLocation, useSearchParams } from 'react-router-dom';
 import EventsDisplay from "../components/events/events";
-import { NOSTR_KINDS } from "../config/consts";
+import { NOSTR_KINDS_DISPLAY } from "../config/consts";
 import { NostrEvent } from "../types/event";
 import { useState, useEffect } from "react";
 import { relayInit } from 'nostr-tools';
@@ -187,7 +187,7 @@ const InspectorPage = () => {
           <Form.Label>Kinds of Events</Form.Label>
           <Form.Select onChange={handleKindsChange} defaultValue="" value={kinds} multiple>
             <option key={""} value={""}>All</option>
-            {Object.entries(NOSTR_KINDS).map(([kind, kindDisplay]) => (
+            {Object.entries(NOSTR_KINDS_DISPLAY).map(([kind, kindDisplay]) => (
                 <option key={kind} value={kind}>{kindDisplay}</option>
             ))}
           </Form.Select>

@@ -4,7 +4,7 @@
     *
     * If you update the list, please update the event type file as well
 **/
-export const NOSTR_KINDS = {
+export const NOSTR_KINDS_DISPLAY = {
     0: "Metadata (0)",
     1: "Short Text Note (1)",
     2: "Recommended Relay (2)",
