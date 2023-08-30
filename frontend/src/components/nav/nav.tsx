@@ -16,13 +16,16 @@ const NavBarComponent: React.FC = () => {
                     <Nav className="ms-auto">
                         <Nav.Link
                             href={pages.getRelaySearch()}
-                            className={location.pathname === pages.getRelaySearch() || location.pathname == pages.getHome() ? 'active' : ''}>Search</Nav.Link>
+                            className={location.pathname === pages.getRelaySearch() ? 'active' : ''}>Search</Nav.Link>
                         <Nav.Link
                             href={pages.getInspector()}
                             className={location.pathname === pages.getInspector() ? 'active' : ''}>Inspector</Nav.Link>
                         <Nav.Link
                             href={pages.getRelayLists()}
                             className={location.pathname === pages.getRelayLists() ? 'active' : ''}>Lists</Nav.Link>
+                        <Nav.Link
+                            href={pages.getMyRelays()}
+                            className={location.pathname === pages.getMyRelays() ? 'active' : ''}>My Relays</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
             </Container>

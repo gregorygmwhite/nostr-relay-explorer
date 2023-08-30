@@ -7,6 +7,7 @@ import RelaySearchPage from './pages/relays/search';
 import RelayListsPage from './pages/relays/lists';
 import RelayCreatePage from './pages/relays/create';
 import RelayDetailPage from './pages/relays/view';
+import MyRelaysPage from './pages/relays/myRelays';
 import pages from './config/pages';
 
 const App: React.FC = () => {
@@ -20,6 +21,7 @@ const App: React.FC = () => {
               <Route path={pages.getRelaysCreate()} element={<RelayCreatePage />} />
               <Route path={pages.getRelaysViewRaw()} element={<RelayDetailPage />} />
               <Route path={pages.getRelayLists()} element={<RelayListsPage />} />
+              <Route path={pages.getMyRelays()} element={<MyRelaysPage />} />
             </Routes>
         </Router>
     );

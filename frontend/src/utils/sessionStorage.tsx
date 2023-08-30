@@ -1,4 +1,5 @@
 const USER_DATA_KEY = "user";
+const RELAYS_DATA_KEY = "relays";
 
 function storeItem(key: string, value: any) {
     sessionStorage.setItem(key, JSON.stringify(value));
@@ -26,6 +27,28 @@ export function updateUserInfo(user: any) {
 export function getUserInfo() {
     const userInfo = getItem(USER_DATA_KEY);
     return userInfo;
+}
+
+export function updatePreferredRelays(relays: string[]) {
+    const currentPreferredRelays = getItem(RELAYS_DATA_KEY);
+    clearItem(RELAYS_DATA_KEY);
+    storeItem(RELAYS_DATA_KEY, relays);
+}
+
+export function addPreferredRelay(relay: string) {
+    let preferredRelays = getItem(RELAYS_DATA_KEY);
+    if (!preferredRelays) {
+        preferredRelays = [];
+    }
+    if (!preferredRelays.includes(relay)) {
+        preferredRelays.push(relay);
+    }
+    updatePreferredRelays(preferredRelays);
+}
+
+export function getPreferredRelays() {
+    const relays = getItem(RELAYS_DATA_KEY);
+    return relays;
 }
 
 export function clearAllData() {

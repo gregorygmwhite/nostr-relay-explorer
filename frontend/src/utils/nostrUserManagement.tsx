@@ -35,38 +35,19 @@ export async function getAndSaveUserInfo() {
     }
     const user = await ndk.signer.blockUntilReady();
     user.ndk = ndk;
+    // const relayList = await user.relayList();
+    // const profileInfo = await user.fetchProfile();
     user.fetchProfile();
-    debugger;
+    user.relayList();
+
     const userData = {
         pubkey: user.npub,
+        profile: user.profile,
+        relayUrls: user.relayUrls, // recommended from the login extension
     }
     updateUserInfo(userData);
     return userData;
 }
-
-// export async function getAndSaveUserInfo() {
-//     return new Promise(async (resolve, reject) => {
-//         const nip07signer = new NDKNip07Signer();
-//         const ndk = new NDK({
-//             signer: nip07signer,
-//             explicitRelayUrls: COMMON_FREE_RELAYS,
-//         });
-//         nip07signer.user().then((user: any) => {
-//             if (!!user.npub) {
-//                 console.log("Permission granted to read public key:", user.npub);
-//                 const userData = {
-//                     pubkey: user.npub,
-//                 }
-//                 updateUserInfo(userData);
-//                 resolve(userData); // Resolve the promise with userData
-//             } else {
-//                 reject(new Error("User didn't grant permission to necessary data."));
-//             }
-//         }).catch((err: any) => {
-//             reject(err); // Reject the promise if there's any error
-//         });
-//     });
-// }
 
 
 export async function createAndPublishRelayList(relays: string[]) {

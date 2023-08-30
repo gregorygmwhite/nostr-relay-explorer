@@ -3,6 +3,8 @@ type UrlId = number | string;
 const pages = {
     getHome(): string { return "/" },
 
+    getMyRelays(): string { return "/relays/mine" },
+
     getRelaySearch(): string { return "/relays" },
     getRelaysCreate(): string { return "/relays/create" },
     getRelayLists(): string { return "/relay-lists" },
