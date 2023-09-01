@@ -91,3 +91,14 @@ export const SPECIAL_RELAY_NIPS = [
     99, // Classified listings
 ]
 
+export const COMMON_FREE_RELAYS = [
+    "wss://relay.primal.net",
+    "wss://nos.lol",
+    "wss://relay.nostr.band",
+    "wss://relay.damus.io",
+    // "wss://nostr.wine", // paid
+    "wss://relayable.org",
+    "wss://saltivka.org",
+    "wss://nostr-pub.wellorder.net",
+    "wss://nostr.bitcoiner.social",
+]

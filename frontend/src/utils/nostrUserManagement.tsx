@@ -1,18 +1,9 @@
 import NDK, { NDKNip07Signer, NDKEvent } from "@nostr-dev-kit/ndk";
 import { EventKind }  from "../types/event";
 import { getUserInfo, updateUserInfo } from "./sessionStorage";
+import { COMMON_FREE_RELAYS } from "../config/consts"
+import { validateRelayUrl } from "./relayUtils";
 
-export const COMMON_FREE_RELAYS = [
-    "wss://relay.primal.net",
-    "wss://nos.lol",
-    "wss://relay.nostr.band",
-    "wss://relay.damus.io",
-    // "wss://nostr.wine", // paid
-    "wss://relayable.org",
-    "wss://saltivka.org",
-    "wss://nostr-pub.wellorder.net",
-    "wss://nostr.bitcoiner.social",
-]
 
 function createNDKEvent() {
     const nip07signer = new NDKNip07Signer();
@@ -76,11 +67,4 @@ function transformRelayListIntoEventTags(relays: string[]) {
     return eventTags;
 }
 
-function validateRelayUrl(relayUrl: string) {
-    if (!relayUrl) {
-        throw new Error("Relay URL cannot be empty");
-    }
-    if (!relayUrl.startsWith("wss://") && !relayUrl.startsWith("ws://")) {
-        throw new Error("Relay URLs must start with wss:// or ws://");
-    }
-}
+
