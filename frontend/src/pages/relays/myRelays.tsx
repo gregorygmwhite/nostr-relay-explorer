@@ -2,12 +2,21 @@ import {
     Container,
     Button,
     Card,
+    Table
 } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import { getAndSaveUserInfo } from "../../utils/nostrUserManagement";
-import { getUserInfo, getPreferredRelays } from "../../utils/sessionStorage";
+import {
+    getUserInfo,
+    getPreferredRelays,
+    addPreferredRelay,
+    removePreferredRelay,
+} from "../../utils/sessionStorage";
 import LoadingIndicator from "../../components/common/loadingIndicator";
 import { getUserRelays } from "../../utils/getRelays";
+import CopyableText from "../../components/common/copyableText";
+import { createAndPublishRelayList } from "../../utils/nostrUserManagement";
+
 
 const JB55_PUBKEY = "npub1xtscya34g58tk0z605fvr788k263gsu6cy9x0mhnm87echrgufzsevkk5s"
 const GREG_PUBKEY = "npub1r3fwhjpx2njy87f9qxmapjn9neutwh7aeww95e03drkfg45cey4qgl7ex2"
@@ -36,14 +45,38 @@ export default function MyRelaysPage() {
     }
 
     function retrieveStoredUser() {
+        setLoadingUser(true);
         const userData = getUserInfo();
+        console.log("refresh user data", userData)
         setUser(userData);
+        setLoadingUser(false);
+    }
+
+    function addAllToPreferredRealys(relaysToAdd: string[]) {
+        relaysToAdd.forEach((relay: string) => {
+            addPreferredRelay(relay);
+        });
+        setPreferredRelays(getPreferredRelays());
+    }
+
+    function addPreferredRelayToStorage(relayUrl: string) {
+        addPreferredRelay(relayUrl)
+        setPreferredRelays(getPreferredRelays());
+    }
+
+    function removePreferredRelayFromStorage(relayUrl: string) {
+        removePreferredRelay(relayUrl)
+        setPreferredRelays(getPreferredRelays());
     }
 
     useEffect(() => {
         setPreferredRelays(getPreferredRelays());
         setExtensionRecommendedRelays(user?.relayUrls);
     }, [user]);
+
+    function saveAndPublishPreferredRelaysList() {
+        createAndPublishRelayList(preferredRelays)
+    }
 
     return (
         <div>
@@ -70,32 +103,90 @@ export default function MyRelaysPage() {
                                 </Button>
                             </Card>
                         )}
-                        {(user?.pubkey) && (
-                            <Card style={{ padding: "2rem", marginBottom: "2rem" }}>
-                                <div style={{marginBottom: "2rem"}}>
-                                    <h2>Selected Preferred Relays</h2>
-                                    <p>These are the relays you've selected via Relay.Guide</p>
-                                    <div style={{ marginTop: "1rem"}} >
-                                        {preferredRelays?.length > 0 ? (
-                                            <ul>
-                                                {preferredRelays.map((relay: string) => <li>{relay}</li>)}
-                                            </ul>
-                                        ) : (
-                                            <h5>No relays selected</h5>
-                                        )}
-                                    </div>
-                                </div>
 
+                        <Card style={{ padding: "2rem", marginBottom: "2rem" }}>
+                            <div style={{marginBottom: "2rem"}}>
+                                <h2>Selected Preferred Relays</h2>
+                                <p>
+                                    These are the relays you've selected via Relay.Guide
+                                    <br/>
+                                    You can save this list as your new preferred list of relays, and advertise it so clients can start off with your preferred relays.
+                                </p>
+                                <div style={{ marginTop: "1rem"}} >
+                                    {preferredRelays?.length > 0 ? (
+                                        <>
+                                            <Table hover responsive>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Relay URL</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {preferredRelays.map((relay: string) => (
+                                                        <tr key={relay}>
+                                                            <td>
+                                                                <CopyableText text={relay} />
+                                                            </td>
+                                                            <td>
+                                                                <Button onClick={() => removePreferredRelayFromStorage(relay)} variant="danger">
+                                                                    Remove
+                                                                </Button>
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </Table>
+                                            <Button onClick={saveAndPublishPreferredRelaysList} variant="success">
+                                                Save and publish preferred relays list
+                                            </Button>
+                                        </>
+                                    ) : (
+                                        <h5>No relays selected</h5>
+                                    )}
+                                </div>
+                            </div>
+                            {(user?.pubkey) && (
                                 <div style={{marginBottom: "2rem"}}>
                                     <h2>Recommendations based on previous settings</h2>
                                     <p>These are the relays that we found you set as preferred on common relays</p>
                                     <div style={{ marginTop: "1rem"}} >
                                         {loadingUserRelays ? <LoadingIndicator /> : (
                                             <>
-                                                {queriedUserRelays?.length > 0 ? (
-                                                    <ul>
-                                                        {queriedUserRelays.map((relay: string) => <li key={relay}>{relay}</li>)}
-                                                    </ul>
+                                                {queriedUserRelays ? (
+                                                    <>
+                                                        <Button onClick={() => addAllToPreferredRealys(queriedUserRelays)}>
+                                                            Add all to preferred relays
+                                                        </Button>
+                                                        <Table hover responsive>
+                                                            <thead>
+                                                                <tr>
+                                                                <th>Relay URL</th>
+                                                                <th></th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {queriedUserRelays.map((relay: string) => (
+                                                                    <tr key={relay}>
+                                                                        <td>
+                                                                            <CopyableText text={relay} />
+                                                                        </td>
+                                                                        <td>
+                                                                            {preferredRelays.includes(relay) ? (
+                                                                                <Button disabled>
+                                                                                    Add to preferred relays
+                                                                                </Button>
+                                                                            ): (
+                                                                                <Button onClick={() => addPreferredRelayToStorage(relay)}>
+                                                                                    Add to preferred relays
+                                                                                </Button>
+                                                                            )}
+                                                                        </td>
+                                                                    </tr>
+                                                                ))}
+                                                            </tbody>
+                                                        </Table>
+                                                    </>
                                                 ) : (
                                                     <h5>No relay recommendations found on commonly used relays</h5>
                                                 )}
@@ -103,9 +194,8 @@ export default function MyRelaysPage() {
                                         )}
                                     </div>
                                 </div>
-
-                            </Card>
-                        )}
+                            )}
+                        </Card>
                     </>
                 )}
                 <Card style={{ padding: "2rem", marginBottom: "2rem" }}>

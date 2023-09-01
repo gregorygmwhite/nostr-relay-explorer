@@ -46,6 +46,20 @@ export function addPreferredRelay(relay: string) {
     updatePreferredRelays(preferredRelays);
 }
 
+export function removePreferredRelay(relay: string) {
+    let preferredRelays = getItem(RELAYS_DATA_KEY);
+    if (!preferredRelays) {
+        preferredRelays = [];
+    }
+    let newList: string[] = [];
+    preferredRelays.forEach((preferredRelay: string) => {
+        if (preferredRelay !== relay) {
+            newList.push(preferredRelay);
+        }
+    });
+    updatePreferredRelays(newList);
+}
+
 export function getPreferredRelays() {
     const relays = getItem(RELAYS_DATA_KEY);
     return relays;
