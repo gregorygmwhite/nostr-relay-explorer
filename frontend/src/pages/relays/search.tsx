@@ -7,6 +7,7 @@ import { Card, Form } from "react-bootstrap";
 import LoadingIndicator from '../../components/common/loadingIndicator';
 import { SPECIAL_RELAY_NIPS, RELAY_NIPS } from '../../config/consts';
 
+
 export default function RelaySearchPage() {
 
   const [relays, setRelays] = useState<Relay[]>([]);
@@ -70,7 +71,6 @@ export default function RelaySearchPage() {
       setRelayFetchError(error.message);
     }
   }
-
 
   // debounce text filter
   useEffect(() => {
@@ -186,7 +186,9 @@ export default function RelaySearchPage() {
                   </Form.Select>
                 </Form.Group>
 
-                <RelaysList relays={relays} />
+                <RelaysList
+                  relays={relays}
+                />
               </>
             )}
           </>

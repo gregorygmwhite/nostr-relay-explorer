@@ -1,10 +1,16 @@
-import { ReactElement } from "react";
+import { ReactElement, useState, useEffect } from "react";
 import Relay from "../../types/relays";
 import { useNavigate, Link } from 'react-router-dom';
 import LoadingIndicator from "../common/loadingIndicator";
 import pages from "../../config/pages";
-import { Table } from "react-bootstrap";
+import { Table, Button } from "react-bootstrap";
 import CopyableText from "../common/copyableText";
+import {
+  getUserInfo,
+  getPreferredRelays,
+  addPreferredRelay,
+  removePreferredRelay,
+} from "../../utils/sessionStorage";
 
 const RelaysList = ({
   relays,
@@ -14,10 +20,30 @@ const RelaysList = ({
 
   const navigate = useNavigate();
 
-  const handleRowClick = (event: any, relayId: string) => {
-    event.preventDefault();
-    navigate(pages.getRelayView(relayId));
+
+  const [user, setUser] = useState<any>(null);
+  const [preferredRelays, setPreferredRelays] = useState<string[]>([]);
+
+  function retrieveStoredUser() {
+      const userData = getUserInfo();
+      console.log("refresh user data", userData)
+      setUser(userData);
   }
+
+  function addPreferredRelayToStorage(relayUrl: string) {
+      addPreferredRelay(relayUrl)
+      setPreferredRelays(getPreferredRelays());
+  }
+
+  function removePreferredRelayFromStorage(relayUrl: string) {
+      removePreferredRelay(relayUrl)
+      setPreferredRelays(getPreferredRelays());
+  }
+
+  useEffect(() => {
+    setUser(retrieveStoredUser())
+    setPreferredRelays(getPreferredRelays())
+  }, []);
 
   return (
     <div className="mt-4">
@@ -43,6 +69,7 @@ const RelaysList = ({
                   <th>Name</th>
                   <th>URL</th>
                   <th>Payment Required</th>
+                  <th>Preferred</th>
                 </tr>
               </thead>
               <tbody>
@@ -58,6 +85,17 @@ const RelaysList = ({
                     </td>
                     <td>
                       {relay.payment_required ? "Yes" : "-"}
+                    </td>
+                    <td>
+                      {preferredRelays.includes(relay.url) ? (
+                        <Button onClick={() => removePreferredRelayFromStorage(relay.url)} variant="danger" title="remove from preferred relay list">
+                          Remove
+                        </Button>
+                      ):(
+                        <Button onClick={() => addPreferredRelayToStorage(relay.url)} title="add to preferred relay list">
+                          Add
+                        </Button>
+                      )}
                     </td>
                   </tr>
                 ))}

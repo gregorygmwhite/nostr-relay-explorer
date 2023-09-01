@@ -5,11 +5,11 @@ import { COMMON_FREE_RELAYS } from "../config/consts"
 import { validateRelayUrl } from "./relayUtils";
 
 
-function createNDKEvent() {
+function createNDKEvent(extraRelays: string[]) {
     const nip07signer = new NDKNip07Signer();
     const ndk = new NDK({
         signer: nip07signer,
-        explicitRelayUrls: COMMON_FREE_RELAYS,
+        explicitRelayUrls: [...COMMON_FREE_RELAYS, ...extraRelays],
     });
     const event = new NDKEvent(ndk);
     return event;
@@ -41,19 +41,16 @@ export async function getAndSaveUserInfo() {
 }
 
 
-export async function createAndPublishRelayList(relays: string[]) {
-    let user = JSON.parse(getUserInfo());
-
+export async function createAndPublishRelayList(relays: string[], user: any) {
     if (!user && !user.pubkey) {
         user = await getAndSaveUserInfo();
     }
 
-    const event = createNDKEvent();
+    const event = createNDKEvent(relays);
     event.kind = EventKind.RelayListMetadata;
     event.content = "";
-    event.pubkey = user.pubkey;
     event.tags = transformRelayListIntoEventTags(relays);
-
+    console.log("publishing relay list event", event)
     event.publish();
 }
 

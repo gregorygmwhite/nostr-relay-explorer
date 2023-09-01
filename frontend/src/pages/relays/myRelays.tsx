@@ -18,10 +18,6 @@ import CopyableText from "../../components/common/copyableText";
 import { createAndPublishRelayList } from "../../utils/nostrUserManagement";
 
 
-const JB55_PUBKEY = "npub1xtscya34g58tk0z605fvr788k263gsu6cy9x0mhnm87echrgufzsevkk5s"
-const GREG_PUBKEY = "npub1r3fwhjpx2njy87f9qxmapjn9neutwh7aeww95e03drkfg45cey4qgl7ex2"
-const RANDOM_PUBKEY = "80fde8b785a59ad2d3b2fac0053aa3fa6ff970db5e574d67c82910f927639461"
-
 export default function MyRelaysPage() {
 
     const [user, setUser] = useState<any>(null);
@@ -38,8 +34,7 @@ export default function MyRelaysPage() {
         setLoadingUser(false);
         setLoadingUserRelays(true);
         const relaysUserWantsToQuery = [...userData.relayUrls];
-        // const usersExistingRelays = await getUserRelays(relaysUserWantsToQuery, userData.pubkey);
-        const usersExistingRelays = await getUserRelays(relaysUserWantsToQuery, RANDOM_PUBKEY);
+        const usersExistingRelays = await getUserRelays(relaysUserWantsToQuery, userData.pubkey);
         setQueriedUserRelays(usersExistingRelays)
         setLoadingUserRelays(false);
     }
@@ -75,7 +70,7 @@ export default function MyRelaysPage() {
     }, [user]);
 
     function saveAndPublishPreferredRelaysList() {
-        createAndPublishRelayList(preferredRelays)
+        createAndPublishRelayList(preferredRelays, user)
     }
 
     return (
@@ -137,9 +132,16 @@ export default function MyRelaysPage() {
                                                     ))}
                                                 </tbody>
                                             </Table>
-                                            <Button onClick={saveAndPublishPreferredRelaysList} variant="success">
-                                                Save and publish preferred relays list
-                                            </Button>
+                                            {user?.pubkey ? (
+                                                <Button onClick={saveAndPublishPreferredRelaysList} variant="success">
+                                                    Save and publish preferred relays list
+                                                </Button>
+                                            ) : (
+                                                <Button variant="success" disabled title="not logged in">
+                                                    Save and publish preferred relays list
+                                                </Button>
+                                            )}
+
                                         </>
                                     ) : (
                                         <h5>No relays selected</h5>
@@ -153,7 +155,7 @@ export default function MyRelaysPage() {
                                     <div style={{ marginTop: "1rem"}} >
                                         {loadingUserRelays ? <LoadingIndicator /> : (
                                             <>
-                                                {queriedUserRelays ? (
+                                                {queriedUserRelays?.length > 0 ? (
                                                     <>
                                                         <Button onClick={() => addAllToPreferredRealys(queriedUserRelays)}>
                                                             Add all to preferred relays
@@ -198,11 +200,6 @@ export default function MyRelaysPage() {
                         </Card>
                     </>
                 )}
-                <Card style={{ padding: "2rem", marginBottom: "2rem" }}>
-                    <Button onClick={retrieveStoredUser}>
-                        Refresh user from DB
-                    </Button>
-                </Card>
             </Container>
         </div>
     );
