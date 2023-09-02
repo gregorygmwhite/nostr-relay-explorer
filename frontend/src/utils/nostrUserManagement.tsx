@@ -3,6 +3,7 @@ import { EventKind }  from "../types/event";
 import { getUserInfo, updateUserInfo } from "./sessionStorage";
 import { COMMON_FREE_RELAYS } from "../config/consts"
 import { validateRelayUrl } from "./relayUtils";
+import { nip19 } from 'nostr-tools'
 
 
 function createNDKEvent(extraRelays: string[]) {
@@ -25,14 +26,11 @@ export async function getAndSaveUserInfo() {
         throw new Error("Internal error, signing extension not connected.");
     }
     const user = await ndk.signer.blockUntilReady();
-    user.ndk = ndk;
-    // const relayList = await user.relayList();
-    // const profileInfo = await user.fetchProfile();
-    user.fetchProfile();
-    user.relayList();
-
+    const npub = user.npub;
+    const hexpubkey = nip19.decode(user.npub).data;
     const userData = {
-        pubkey: user.npub,
+        pubkey: hexpubkey,
+        npub: npub,
         profile: user.profile,
         relayUrls: user.relayUrls, // recommended from the login extension
     }
@@ -51,17 +49,36 @@ export async function createAndPublishRelayList(relays: string[], user: any) {
     event.content = "";
     event.tags = transformRelayListIntoEventTags(relays);
     console.log("publishing relay list event", event)
-    event.publish();
+    await event.publish().catch((error: any) => {
+        console.log("error publishing relay list event", error)
+    })
+    console.log("finished publishing relay list event")
 }
 
 function transformRelayListIntoEventTags(relays: string[]) {
     const eventTags = relays.map((relayUrl) => {
         validateRelayUrl(relayUrl); // throws an error if invalid
         return [
-            "r", relayUrl, "write"
+            "r", relayUrl
         ];
     });
     return eventTags;
 }
 
+export async function getUserProfile(userPubKey: any) {
+    console.log("fetching user profile")
+
+    const ndk = new NDK({
+        explicitRelayUrls: COMMON_FREE_RELAYS,
+    });
+    const userInfo = ndk.getUser({
+        hexpubkey: userPubKey,
+    });
+    console.log("found user", userInfo)
+    const profileInfo = await userInfo.fetchProfile();
+
+    console.log("fetched user profile", profileInfo)
+
+    return userInfo.profile;
+}
 

@@ -5,12 +5,16 @@ import {
     Table
 } from "react-bootstrap";
 import { useState, useEffect } from "react";
-import { getAndSaveUserInfo } from "../../utils/nostrUserManagement";
+import {
+    getAndSaveUserInfo,
+    getUserProfile,
+} from "../../utils/nostrUserManagement";
 import {
     getUserInfo,
     getPreferredRelays,
     addPreferredRelay,
     removePreferredRelay,
+    updateUserInfo,
 } from "../../utils/sessionStorage";
 import LoadingIndicator from "../../components/common/loadingIndicator";
 import { getUserRelays } from "../../utils/getRelays";
@@ -25,6 +29,8 @@ export default function MyRelaysPage() {
     const [extensionRecommendedRelays, setExtensionRecommendedRelays] = useState<string[]>([]);
     const [queriedUserRelays, setQueriedUserRelays] = useState<string[]>([]);
     const [loadingUser, setLoadingUser] = useState<boolean>(false);
+    const [loadingUserProfile, setLoadingUserProfile] = useState<boolean>(false);
+    const [publishingRelayList, setPublishingRelayList] = useState<boolean>(false);
     const [loadingUserRelays, setLoadingUserRelays] = useState<boolean>(false);
 
     async function initiateLogin() {
@@ -32,19 +38,20 @@ export default function MyRelaysPage() {
         const userData = await getAndSaveUserInfo();
         setUser(userData);
         setLoadingUser(false);
+
         setLoadingUserRelays(true);
         const relaysUserWantsToQuery = [...userData.relayUrls];
         const usersExistingRelays = await getUserRelays(relaysUserWantsToQuery, userData.pubkey);
         setQueriedUserRelays(usersExistingRelays)
         setLoadingUserRelays(false);
-    }
 
-    function retrieveStoredUser() {
-        setLoadingUser(true);
-        const userData = getUserInfo();
-        console.log("refresh user data", userData)
-        setUser(userData);
-        setLoadingUser(false);
+        // setLoadingUserProfile(true);
+        // const fullUserProfile = await getUserProfile(userData.pubkey);
+        // let updatedUserData = {...getUserInfo()}
+        // updatedUserData.profile = fullUserProfile;
+        // updateUserInfo(updatedUserData);
+        // setUser(updatedUserData)
+        // setLoadingUserProfile(false);
     }
 
     function addAllToPreferredRealys(relaysToAdd: string[]) {
@@ -69,8 +76,10 @@ export default function MyRelaysPage() {
         setExtensionRecommendedRelays(user?.relayUrls);
     }, [user]);
 
-    function saveAndPublishPreferredRelaysList() {
-        createAndPublishRelayList(preferredRelays, user)
+    async function saveAndPublishPreferredRelaysList() {
+        setPublishingRelayList(true)
+        await createAndPublishRelayList(preferredRelays, user)
+        setPublishingRelayList(false)
     }
 
     return (
@@ -81,8 +90,9 @@ export default function MyRelaysPage() {
                         {(user?.pubkey) ? (
                             <Card style={{ padding: "2rem", marginBottom: "2rem" }}>
                                 <h2>User Info</h2>
-                                <p><strong>Pubkey: </strong> {user.pubkey}</p>
-                                <code><pre>{JSON.stringify(user, null, 2)}</pre></code>
+                                <div><strong>pubkey: </strong> {user.pubkey}</div>
+                                <div><strong>npub: </strong> {user.npub}</div>
+                                {/* <code><pre>{JSON.stringify(user, null, 2)}</pre></code> */}
                             </Card>
                         ) : (
                             <Card style={{ padding: "2rem", marginBottom: "2rem" }}>
@@ -133,9 +143,13 @@ export default function MyRelaysPage() {
                                                 </tbody>
                                             </Table>
                                             {user?.pubkey ? (
-                                                <Button onClick={saveAndPublishPreferredRelaysList} variant="success">
-                                                    Save and publish preferred relays list
-                                                </Button>
+                                                <>
+                                                    {publishingRelayList ? <LoadingIndicator /> : (
+                                                        <Button onClick={saveAndPublishPreferredRelaysList} variant="success">
+                                                            Save and publish preferred relays list
+                                                        </Button>
+                                                    )}
+                                                </>
                                             ) : (
                                                 <Button variant="success" disabled title="not logged in">
                                                     Save and publish preferred relays list

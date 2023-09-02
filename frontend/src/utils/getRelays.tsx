@@ -4,7 +4,7 @@ import { EventKind } from "../types/event";
 import { validateRelayUrl } from "./relayUtils";
 
 
-export async function getUserRelays(relayUrls: string[], userPubkey: string) {
+export async function getUserRelays(relayUrls: string[], userPubkey: any) {
     relayUrls = [...relayUrls, ...COMMON_FREE_RELAYS];
     const nip65Events = await getNIP65RelayListEventsFromRelays(relayUrls, userPubkey);
     console.log("nip65Events", nip65Events)
