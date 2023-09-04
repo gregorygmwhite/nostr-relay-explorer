@@ -2,7 +2,9 @@ import {
     Container,
     Button,
     Card,
-    Table
+    Table,
+    Toast,
+    ToastContainer,
 } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import {
@@ -31,6 +33,8 @@ export default function MyRelaysPage() {
     const [loadingUserProfile, setLoadingUserProfile] = useState<boolean>(false);
     const [publishingRelayList, setPublishingRelayList] = useState<boolean>(false);
     const [loadingUserRelays, setLoadingUserRelays] = useState<boolean>(false);
+    const [successfullySavedRelays, setSuccessfullySavedRelays] = useState<boolean>(false);
+    const [failedSavedRelays, setFailedSavedRelays] = useState<boolean>(false);
 
     async function initiateLogin() {
         setLoadingUser(true);
@@ -77,13 +81,66 @@ export default function MyRelaysPage() {
 
     async function saveAndPublishPreferredRelaysList() {
         setPublishingRelayList(true)
-        await createAndPublishRelayList(preferredRelays, user)
+        let success = true;
+        try {
+            await createAndPublishRelayList(preferredRelays, user)
+        } catch (error: any) {
+            console.error("Failed to publish preferred relays list", error);
+            success = false;
+        }
         setPublishingRelayList(false)
+        if (success) {
+            showSuccessSavedRelays();
+        } else {
+            showFailedSavedRelays();
+        }
+    }
+
+    function showSuccessSavedRelays() {
+        setSuccessfullySavedRelays(true)
+        setTimeout(() => {
+            setSuccessfullySavedRelays(false)
+        }, 3000);
+    }
+
+    function showFailedSavedRelays() {
+        setFailedSavedRelays(true)
+        setTimeout(() => {
+            setFailedSavedRelays(false)
+        }, 3000);
     }
 
     return (
         <div>
             <Container>
+                {successfullySavedRelays && (
+                    <ToastContainer
+                        className="p-3"
+                        position="top-center"
+                        style={{ zIndex: 1 }}
+                        >
+                        <Toast bg="success">
+                            <Toast.Header closeButton={false}>
+                                <strong className="me-auto">Relay Lists</strong>
+                            </Toast.Header>
+                            <Toast.Body className="text-white">Successfully published preferred relay list.</Toast.Body>
+                        </Toast>
+                    </ToastContainer>
+                )}
+                {failedSavedRelays && (
+                    <ToastContainer
+                        className="p-3"
+                        position="top-center"
+                        style={{ zIndex: 1 }}
+                        >
+                        <Toast bg="danger">
+                            <Toast.Header closeButton={false}>
+                                <strong className="me-auto">Relay Lists</strong>
+                            </Toast.Header>
+                            <Toast.Body className="text-white">Failed to publish preferred relay list.</Toast.Body>
+                        </Toast>
+                    </ToastContainer>
+                )}
                 {loadingUser ? <LoadingIndicator /> : (
                     <>
                         {(user?.pubkey) ? (
