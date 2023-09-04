@@ -271,6 +271,7 @@ export default function RelayListsPage() {
     <div className="container mt-2">
       <Card className="mt-2 p-4">
         <div className="mb-3">
+            <h3>Relay Lists</h3>
             <ul className="nav nav-tabs">
               <li className="nav-item">
                 <button

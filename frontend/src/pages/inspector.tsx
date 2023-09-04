@@ -17,6 +17,7 @@ import {
   Card,
 } from 'react-bootstrap';
 import { Check } from 'react-bootstrap-icons';
+import { isValidRelayUrl } from '../utils/relayUtils';
 
 const InspectorPage = () => {
 
@@ -95,6 +96,11 @@ const InspectorPage = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault(); // Prevent the form from reloading the page
+
+    if (isValidRelayUrl(relayUrl) === false) {
+      setEventsErrorMessage(`invalid relay url: ${relayUrl}`);
+      return;
+    }
 
     const parsedKinds = parseKindsSelection(kinds)
     const newParams = {
