@@ -96,7 +96,13 @@ const InspectorPage = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault(); // Prevent the form from reloading the page
 
-    const newParams = { relayUrl: relayUrl };
+    const parsedKinds = parseKindsSelection(kinds)
+    const newParams = {
+      relayUrl: relayUrl,
+      author: author,
+      kinds: parsedKinds.join(","),
+
+    };
     setSearchParams(newParams);
 
     // import and initialize the relay
@@ -110,7 +116,6 @@ const InspectorPage = () => {
         try {
             let queries: any = [{ limit: defaultLimit }]
 
-            const parsedKinds = parseKindsSelection(kinds)
             if (parsedKinds.length !== 0) {
                 queries[0]["kinds"] = parsedKinds;
             }
@@ -150,6 +155,15 @@ const InspectorPage = () => {
 
     if (relayUrlParam) {
       setRelayUrl(relayUrlParam);
+    }
+    const authorParam = queryParams.get('author');
+    if (authorParam) {
+      setAuthor(authorParam);
+    }
+    const kindsParam = queryParams.get('kinds');
+    if (kindsParam) {
+      const parsedKinds = kindsParam.split(",")
+      setKinds(parsedKinds);
     }
   }, [location.search]);
 
