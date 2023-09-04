@@ -10,6 +10,7 @@ import { useState, useEffect } from "react";
 import {
     getAndSaveUserInfo,
     createAndPublishRelayList,
+    getAndSaveUserProfile,
 } from "../../utils/nostrUserManagement";
 import {
     getUserInfo,
@@ -42,19 +43,25 @@ export default function MyRelaysPage() {
         setUser(userData);
         setLoadingUser(false);
 
+        setLoadingUserProfile(true);
         setLoadingUserRelays(true);
-        const relaysUserWantsToQuery = [...userData.relayUrls];
-        const usersExistingRelays = await getUserRelays(relaysUserWantsToQuery, userData.pubkey);
-        setQueriedUserRelays(usersExistingRelays)
-        setLoadingUserRelays(false);
 
-        // setLoadingUserProfile(true);
-        // const fullUserProfile = await getUserProfile(userData.pubkey);
-        // let updatedUserData = {...getUserInfo()}
-        // updatedUserData.profile = fullUserProfile;
-        // updateUserInfo(updatedUserData);
-        // setUser(updatedUserData)
-        // setLoadingUserProfile(false);
+        try {
+            const fullUserProfile = await getAndSaveUserProfile(userData.pubkey, []);
+            setUser(fullUserProfile)
+        } catch (error: any) {
+            console.error("Failed to get and save user profile", error);
+        }
+        setLoadingUserProfile(false);
+
+        try {
+            const relaysUserWantsToQuery = [...userData.relayUrls];
+            const usersExistingRelays = await getUserRelays(relaysUserWantsToQuery, userData.pubkey);
+            setQueriedUserRelays(usersExistingRelays)
+        } catch (error: any) {
+            console.error("Failed to get user relays", error);
+        }
+        setLoadingUserRelays(false);
     }
 
     function addAllToPreferredRealys(relaysToAdd: string[]) {
@@ -148,7 +155,22 @@ export default function MyRelaysPage() {
                                 <h2>User Info</h2>
                                 <div><strong>pubkey: </strong> {user.pubkey}</div>
                                 <div><strong>npub: </strong> {user.npub}</div>
-                                {/* <code><pre>{JSON.stringify(user, null, 2)}</pre></code> */}
+                                {loadingUserProfile? <LoadingIndicator /> : (
+                                    <div>
+                                        {user.profile.name ? (
+                                            <div><strong>name: </strong> {user.profile.name}</div>
+                                        ) : (
+                                            <div><strong>name: </strong> Unknown</div>
+                                        )}
+                                        {user.profile.about && (
+                                            <div><strong>about: </strong> {user.profile.about}</div>
+                                        )}
+                                        {user.profile.nip05 && (
+                                            <div><strong>nip05: </strong> {user.profile.nip05}</div>
+                                        )}
+                                    </div>
+                                )}
+                                <code><pre>{JSON.stringify(user, null, 2)}</pre></code>
                             </Card>
                         ) : (
                             <Card style={{ padding: "2rem", marginBottom: "2rem" }}>

@@ -88,7 +88,6 @@ function transformRelayListIntoEventTags(relays: string[]) {
 }
 
 export async function publishToMultipleRelays(event: any, relays: string[]) {
-
     const pool = new SimplePool()
 
     let pubs = pool.publish(relays, event)
@@ -98,4 +97,54 @@ export async function publishToMultipleRelays(event: any, relays: string[]) {
     })
 
     pool.close(relays)
+}
+
+export async function getAndSaveUserProfile(pubkey: string, relayUrls: string[]) {
+    const profileInfo = await getUserProfile(pubkey, relayUrls);
+    const userData = getUserInfo();
+    userData.profile = profileInfo;
+    updateUserInfo(userData);
+    return userData;
+}
+
+export async function getUserProfile(pubkey: string, relayUrls: string[]) {
+    let profileInfo = {}
+    let kind0Events = await getKind0EventsForPubkey(pubkey, relayUrls);
+    console.log("kind0Events", kind0Events)
+
+    if (kind0Events.length === 0) {
+        return profileInfo;
+    }
+
+    let latestEvent = kind0Events[0];
+    kind0Events.forEach((event: any) => {
+        if (latestEvent.created_at < event.created_at) {
+            latestEvent = event;
+        }
+    });
+
+    console.log("latestKind0Event", latestEvent)
+
+    profileInfo = JSON.parse(latestEvent.content);
+
+    return profileInfo;
+}
+
+async function getKind0EventsForPubkey(pubkey: string, relayUrls: string[]) {
+    const pool = new SimplePool()
+
+    let relays = [...COMMON_FREE_RELAYS, ...relayUrls]
+
+    let events = await pool.list(relays,
+        [
+            {
+                kinds: [0],
+                authors: [pubkey],
+            }
+        ]
+    )
+
+    pool.close(relays)
+
+    return events;
 }
