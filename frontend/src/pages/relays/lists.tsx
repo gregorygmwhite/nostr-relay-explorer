@@ -7,7 +7,7 @@ import { Card, Form } from "react-bootstrap";
 import LoadingIndicator from '../../components/common/loadingIndicator';
 import { relayInit, nip05 } from 'nostr-tools';
 import CopyableText from '../../components/common/copyableText';
-import { isValidRelayUrl } from '../../utils/relayUrl';
+import { isValidRelayUrl } from '../../utils/relayUtils';
 import { isValidPubKey } from '../../utils/publicKeys';
 import { EventKind } from '../../types/event';
 

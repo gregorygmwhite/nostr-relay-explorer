@@ -1,3 +1,6 @@
+export function isValidRelayUrl(relayUrl: string): boolean {
+    return relayUrl.startsWith("ws://") || relayUrl.startsWith("wss://");
+}
 
 export function validateRelayUrl(relayUrl: string) {
     if (!relayUrl) {
