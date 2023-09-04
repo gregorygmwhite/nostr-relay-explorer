@@ -62,6 +62,9 @@ export function removePreferredRelay(relay: string) {
 
 export function getPreferredRelays() {
     const relays = getItem(RELAYS_DATA_KEY);
+    if (relays === null) {
+        return [];
+    }
     return relays;
 }
 
