@@ -13,12 +13,11 @@ import {
     getAndSaveUserProfile,
 } from "../../utils/nostrUserManagement";
 import {
-    getUserInfo,
     getPreferredRelays,
     addPreferredRelay,
     removePreferredRelay,
-    updateUserInfo,
 } from "../../utils/sessionStorage";
+import { COMMON_FREE_RELAYS } from "../../config/consts"
 import LoadingIndicator from "../../components/common/loadingIndicator";
 import { getUserRelays } from "../../utils/getRelays";
 import CopyableText from "../../components/common/copyableText";
@@ -151,7 +150,7 @@ export default function MyRelaysPage() {
                 {loadingUser ? <LoadingIndicator /> : (
                     <>
                         {(user?.pubkey) ? (
-                            <Card style={{ padding: "2rem", marginBottom: "2rem" }}>
+                            <Card style={{ padding: "2rem", marginBottom: "2rem", marginTop: "2rem"}}>
                                 <h2>User Info</h2>
                                 <div><strong>pubkey: </strong> {user.pubkey}</div>
                                 <div><strong>npub: </strong> {user.npub}</div>
@@ -196,6 +195,8 @@ export default function MyRelaysPage() {
                                     These are the relays you've selected via Relay.Guide
                                     <br/>
                                     You can save this list as your new preferred list of relays, and advertise it so clients can start off with your preferred relays.
+                                    <br/>
+                                    Saving and publishing your preferred realy list will publish a relay list following the pattern of <a href="https://github.com/nostr-protocol/nips/blob/master/65.md" target="_blank">NIP 65</a>.
                                 </p>
                                 <div style={{ marginTop: "1rem"}} >
                                     {preferredRelays?.length > 0 ? (
@@ -225,13 +226,20 @@ export default function MyRelaysPage() {
                                             {user?.pubkey ? (
                                                 <>
                                                     {publishingRelayList ? <LoadingIndicator /> : (
-                                                        <Button onClick={saveAndPublishPreferredRelaysList} variant="success">
+                                                        <Button
+                                                            onClick={saveAndPublishPreferredRelaysList}
+                                                            variant="success"
+                                                        >
                                                             Save and publish preferred relays list
                                                         </Button>
                                                     )}
                                                 </>
                                             ) : (
-                                                <Button variant="success" disabled title="not logged in">
+                                                <Button
+                                                    variant="success"
+                                                    disabled
+                                                    title="not logged in"
+                                                >
                                                     Save and publish preferred relays list
                                                 </Button>
                                             )}
@@ -245,7 +253,9 @@ export default function MyRelaysPage() {
                             {(user?.pubkey) && (
                                 <div style={{marginBottom: "2rem"}}>
                                     <h2>Recommendations based on previous settings</h2>
-                                    <p>These are the relays that we found you set as preferred on common relays</p>
+                                    <p>
+                                        These are the relays that we found you set as preferred on common relays following the pattern of <a href="https://github.com/nostr-protocol/nips/blob/master/65.md" target="_blank">NIP 65</a>
+                                    </p>
                                     <div style={{ marginTop: "1rem"}} >
                                         {loadingUserRelays ? <LoadingIndicator /> : (
                                             <>
@@ -291,6 +301,44 @@ export default function MyRelaysPage() {
                                     </div>
                                 </div>
                             )}
+                            <div style={{marginBottom: "2rem"}}>
+                                <h2>Common relays being used</h2>
+                                <p>
+                                    These are the "common relays" we are using to find and publish your preferred relays.
+                                    If your client uses these relays to find your account and seed your profile AND they use the NIP 65 pattern for sensing and saving your preferred relays you'll be able to manage your relays via Relay.Guide.
+                                </p>
+                                <Button onClick={() => addAllToPreferredRealys(COMMON_FREE_RELAYS)}>
+                                    Add all to preferred relays
+                                </Button>
+                                <Table hover responsive>
+                                    <thead>
+                                        <tr>
+                                            <th>Relay URL</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {COMMON_FREE_RELAYS.map((relay: string) => (
+                                            <tr key={relay}>
+                                                <td>
+                                                    <CopyableText text={relay} />
+                                                </td>
+                                                <td>
+                                                    {preferredRelays.includes(relay) ? (
+                                                        <Button disabled>
+                                                            Add to preferred relays
+                                                        </Button>
+                                                    ): (
+                                                        <Button onClick={() => addPreferredRelayToStorage(relay)}>
+                                                            Add to preferred relays
+                                                        </Button>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </Table>
+                            </div>
                         </Card>
                     </>
                 )}

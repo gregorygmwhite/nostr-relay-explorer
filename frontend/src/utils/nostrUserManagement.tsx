@@ -58,11 +58,12 @@ export async function createAndPublishRelayList(relays: string[], user: any) {
     if(!user && !user.pubkey) {
         user = await getAndSaveUserInfo();
     }
-    // create event
+
     const NIP65Event = await createNIP65Event(relays, user);
 
-    // publish event
-    const relaysToPublishTo = [...user.relayUrls, ...COMMON_FREE_RELAYS];
+    // TODO: find a way to publish to user's preferred relays too
+    // need a way to sense if those relays are public or not
+    const relaysToPublishTo = COMMON_FREE_RELAYS;  // can only publish to public relays
     await publishToMultipleRelays(NIP65Event, relaysToPublishTo);
     return NIP65Event;
 }
