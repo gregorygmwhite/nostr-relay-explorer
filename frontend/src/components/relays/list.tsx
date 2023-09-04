@@ -10,7 +10,10 @@ import {
   getPreferredRelays,
   addPreferredRelay,
   removePreferredRelay,
+  READ_MARKER,
+  WRITE_MARKER,
 } from "../../utils/sessionStorage";
+import { PreferredRelay } from "../../types/sessionStorage";
 
 const RelaysList = ({
   relays,
@@ -22,7 +25,7 @@ const RelaysList = ({
 
 
   const [user, setUser] = useState<any>(null);
-  const [preferredRelays, setPreferredRelays] = useState<string[]>([]);
+  const [preferredRelays, setPreferredRelays] = useState<PreferredRelay[]>([]);
 
   function retrieveStoredUser() {
       const userData = getUserInfo();
@@ -30,8 +33,8 @@ const RelaysList = ({
       setUser(userData);
   }
 
-  function addPreferredRelayToStorage(relayUrl: string) {
-      addPreferredRelay(relayUrl)
+  function addPreferredRelayToStorage(relayUrl: string, marker: string) {
+      addPreferredRelay(relayUrl, marker)
       setPreferredRelays(getPreferredRelays());
   }
 
@@ -39,6 +42,17 @@ const RelaysList = ({
       removePreferredRelay(relayUrl)
       setPreferredRelays(getPreferredRelays());
   }
+
+  function inPreferredRelays(relayUrl: string) {
+    let contains = false;
+    preferredRelays.forEach((relay: PreferredRelay) => {
+      if (relay.url === relayUrl) {
+        contains = true;
+      }
+    });
+    return contains;
+  }
+
 
   useEffect(() => {
     setUser(retrieveStoredUser())
@@ -87,12 +101,12 @@ const RelaysList = ({
                       {relay.payment_required ? "Yes" : "-"}
                     </td>
                     <td>
-                      {preferredRelays.includes(relay.url) ? (
+                      {inPreferredRelays(relay.url) ? (
                         <Button onClick={() => removePreferredRelayFromStorage(relay.url)} variant="danger" title="remove from preferred relay list">
                           Remove
                         </Button>
                       ):(
-                        <Button onClick={() => addPreferredRelayToStorage(relay.url)} title="add to preferred relay list">
+                        <Button onClick={() => addPreferredRelayToStorage(relay.url, WRITE_MARKER)} title="add to preferred relay list">
                           Add
                         </Button>
                       )}

@@ -16,25 +16,35 @@ import {
     getPreferredRelays,
     addPreferredRelay,
     removePreferredRelay,
+    READ_MARKER,
+    WRITE_MARKER,
 } from "../../utils/sessionStorage";
 import { COMMON_FREE_RELAYS } from "../../config/consts"
 import LoadingIndicator from "../../components/common/loadingIndicator";
 import { getUserRelays } from "../../utils/getRelays";
 import CopyableText from "../../components/common/copyableText";
+import { PreferredRelay } from "../../types/sessionStorage";
 
 
 export default function MyRelaysPage() {
 
     const [user, setUser] = useState<any>(null);
-    const [preferredRelays, setPreferredRelays] = useState<string[]>([]);
+    const [preferredRelays, setPreferredRelays] = useState<PreferredRelay[]>([]);
     const [extensionRecommendedRelays, setExtensionRecommendedRelays] = useState<string[]>([]);
-    const [queriedUserRelays, setQueriedUserRelays] = useState<string[]>([]);
+    const [queriedUserRelays, setQueriedUserRelays] = useState<PreferredRelay[]>([]);
     const [loadingUser, setLoadingUser] = useState<boolean>(false);
     const [loadingUserProfile, setLoadingUserProfile] = useState<boolean>(false);
     const [publishingRelayList, setPublishingRelayList] = useState<boolean>(false);
     const [loadingUserRelays, setLoadingUserRelays] = useState<boolean>(false);
     const [successfullySavedRelays, setSuccessfullySavedRelays] = useState<boolean>(false);
     const [failedSavedRelays, setFailedSavedRelays] = useState<boolean>(false);
+
+    const COMMON_FREE_RELAYS_WITH_WRITE_MARKER = COMMON_FREE_RELAYS.map((relay: string) => {
+        return {
+            url: relay,
+            marker: WRITE_MARKER,
+        }
+    })
 
     async function initiateLogin() {
         setLoadingUser(true);
@@ -55,7 +65,8 @@ export default function MyRelaysPage() {
 
         try {
             const relaysUserWantsToQuery = [...userData.relayUrls];
-            const usersExistingRelays = await getUserRelays(relaysUserWantsToQuery, userData.pubkey);
+            const usersExistingRelays = await getUserRelays(userData.pubkey, relaysUserWantsToQuery);
+            console.log("users existing relays", usersExistingRelays)
             setQueriedUserRelays(usersExistingRelays)
         } catch (error: any) {
             console.error("Failed to get user relays", error);
@@ -63,15 +74,15 @@ export default function MyRelaysPage() {
         setLoadingUserRelays(false);
     }
 
-    function addAllToPreferredRealys(relaysToAdd: string[]) {
-        relaysToAdd.forEach((relay: string) => {
-            addPreferredRelay(relay);
+    function addAllToPreferredRealys(relaysToAdd: PreferredRelay[]) {
+        relaysToAdd.forEach((relay: PreferredRelay) => {
+            addPreferredRelay(relay.url, relay.marker);
         });
         setPreferredRelays(getPreferredRelays());
     }
 
-    function addPreferredRelayToStorage(relayUrl: string) {
-        addPreferredRelay(relayUrl)
+    function addPreferredRelayToStorage(relay: PreferredRelay) {
+        addPreferredRelay(relay.url, relay.marker)
         setPreferredRelays(getPreferredRelays());
     }
 
@@ -79,6 +90,17 @@ export default function MyRelaysPage() {
         removePreferredRelay(relayUrl)
         setPreferredRelays(getPreferredRelays());
     }
+
+    function inPreferredRelays(relayUrl: string) {
+        let contains = false;
+        preferredRelays.forEach((relay: PreferredRelay) => {
+          if (relay.url === relayUrl) {
+            contains = true;
+          }
+        });
+        return contains;
+      }
+
 
     useEffect(() => {
         setPreferredRelays(getPreferredRelays());
@@ -209,13 +231,13 @@ export default function MyRelaysPage() {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {preferredRelays.map((relay: string) => (
-                                                        <tr key={relay}>
+                                                    {preferredRelays.map((relay: PreferredRelay) => (
+                                                        <tr key={relay.url}>
                                                             <td>
-                                                                <CopyableText text={relay} />
+                                                                <CopyableText text={relay.url} />
                                                             </td>
                                                             <td>
-                                                                <Button onClick={() => removePreferredRelayFromStorage(relay)} variant="danger">
+                                                                <Button onClick={() => removePreferredRelayFromStorage(relay.url)} variant="danger">
                                                                     Remove
                                                                 </Button>
                                                             </td>
@@ -272,13 +294,13 @@ export default function MyRelaysPage() {
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                                {queriedUserRelays.map((relay: string) => (
-                                                                    <tr key={relay}>
+                                                                {queriedUserRelays.map((relay: PreferredRelay) => (
+                                                                    <tr key={relay.url}>
                                                                         <td>
-                                                                            <CopyableText text={relay} />
+                                                                            <CopyableText text={relay.url} />
                                                                         </td>
                                                                         <td>
-                                                                            {preferredRelays.includes(relay) ? (
+                                                                            {inPreferredRelays(relay.url) ? (
                                                                                 <Button disabled>
                                                                                     Add to preferred relays
                                                                                 </Button>
@@ -307,7 +329,7 @@ export default function MyRelaysPage() {
                                     These are the "common relays" we are using to find and publish your preferred relays.
                                     If your client uses these relays to find your account and seed your profile AND they use the NIP 65 pattern for sensing and saving your preferred relays you'll be able to manage your relays via Relay.Guide.
                                 </p>
-                                <Button onClick={() => addAllToPreferredRealys(COMMON_FREE_RELAYS)}>
+                                <Button onClick={() => addAllToPreferredRealys(COMMON_FREE_RELAYS_WITH_WRITE_MARKER)}>
                                     Add all to preferred relays
                                 </Button>
                                 <Table hover responsive>
@@ -318,13 +340,13 @@ export default function MyRelaysPage() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {COMMON_FREE_RELAYS.map((relay: string) => (
-                                            <tr key={relay}>
+                                        {COMMON_FREE_RELAYS_WITH_WRITE_MARKER.map((relay: PreferredRelay) => (
+                                            <tr key={relay.url}>
                                                 <td>
-                                                    <CopyableText text={relay} />
+                                                    <CopyableText text={relay.url} />
                                                 </td>
                                                 <td>
-                                                    {preferredRelays.includes(relay) ? (
+                                                    {inPreferredRelays(relay.url) ? (
                                                         <Button disabled>
                                                             Add to preferred relays
                                                         </Button>

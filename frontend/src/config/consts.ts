@@ -101,5 +101,4 @@ export const COMMON_FREE_RELAYS = [
     "wss://saltivka.org",
     "wss://nostr-pub.wellorder.net",
     // "wss://nostr.bitcoiner.social", // private
-    "wss://soloco.nl",
 ]

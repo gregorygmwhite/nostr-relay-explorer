@@ -14,6 +14,7 @@ import {
     getPublicKey as getPublicKeyViaNip07,
     generateEventSignature as generateEventSignatureViaNip07,
 } from "./nip07"
+import { PreferredRelay } from "../types/sessionStorage";
 
 
 function createBaseEvent(pubkey: string) {
@@ -54,7 +55,7 @@ export async function getAndSaveUserInfo() {
     return userData;
 }
 
-export async function createAndPublishRelayList(relays: string[], user: any) {
+export async function createAndPublishRelayList(relays: PreferredRelay[], user: any) {
     if(!user && !user.pubkey) {
         user = await getAndSaveUserInfo();
     }
@@ -68,7 +69,7 @@ export async function createAndPublishRelayList(relays: string[], user: any) {
     return NIP65Event;
 }
 
-async function createNIP65Event(relays: string[], user: any ) {
+async function createNIP65Event(relays: PreferredRelay[], user: any ) {
     let event = createBaseEvent(user.pubkey);
     event.kind = EventKind.RelayListMetadata;
     event.content = "";
@@ -78,39 +79,39 @@ async function createNIP65Event(relays: string[], user: any ) {
     return signedEvent;
 }
 
-function transformRelayListIntoEventTags(relays: string[]) {
-    const eventTags = relays.map((relayUrl) => {
-        validateRelayUrl(relayUrl); // throws an error if invalid
+function transformRelayListIntoEventTags(relays: PreferredRelay[]) {
+    const eventTags = relays.map((relay) => {
+        validateRelayUrl(relay.url); // throws an error if invalid
         return [
-            "r", relayUrl
+            "r", relay.url, relay.marker
         ];
     });
     return eventTags;
 }
 
-export async function publishToMultipleRelays(event: any, relays: string[]) {
+export async function publishToMultipleRelays(event: any, relaysToPublishTo: string[]) {
     const pool = new SimplePool()
 
-    let pubs = pool.publish(relays, event)
+    let pubs = pool.publish(relaysToPublishTo, event)
     await Promise.all(pubs).catch((error: any) => {
-        console.log("error publishing event to relays", event, relays, error)
+        console.log("error publishing event to relays", event, relaysToPublishTo, error)
         throw new Error("Error publishing  event")
     })
 
-    pool.close(relays)
+    pool.close(relaysToPublishTo)
 }
 
-export async function getAndSaveUserProfile(pubkey: string, relayUrls: string[]) {
-    const profileInfo = await getUserProfile(pubkey, relayUrls);
+export async function getAndSaveUserProfile(pubkey: string, relaysToPullFrom: string[]) {
+    const profileInfo = await getUserProfile(pubkey, relaysToPullFrom);
     const userData = getUserInfo();
     userData.profile = profileInfo;
     updateUserInfo(userData);
     return userData;
 }
 
-export async function getUserProfile(pubkey: string, relayUrls: string[]) {
+export async function getUserProfile(pubkey: string, relaysToPullFrom: string[]) {
     let profileInfo = {}
-    let kind0Events = await getKind0EventsForPubkey(pubkey, relayUrls);
+    let kind0Events = await getKind0EventsForPubkey(pubkey, relaysToPullFrom);
     console.log("kind0Events", kind0Events)
 
     if (kind0Events.length === 0) {
@@ -131,15 +132,15 @@ export async function getUserProfile(pubkey: string, relayUrls: string[]) {
     return profileInfo;
 }
 
-async function getKind0EventsForPubkey(pubkey: string, relayUrls: string[]) {
+async function getKind0EventsForPubkey(pubkey: string, relaysToPullFrom: string[]) {
     const pool = new SimplePool()
 
-    let relays = [...COMMON_FREE_RELAYS, ...relayUrls]
+    let relays = [...COMMON_FREE_RELAYS, ...relaysToPullFrom]
 
     let events = await pool.list(relays,
         [
             {
-                kinds: [0],
+                kinds: [EventKind.Metadata],
                 authors: [pubkey],
             }
         ]

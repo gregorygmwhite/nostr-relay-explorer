@@ -1,3 +1,8 @@
+import { PreferredRelay } from "../types/sessionStorage";
+
+export const READ_MARKER = "read";
+export const WRITE_MARKER = "write";
+
 const USER_DATA_KEY = "user";
 const RELAYS_DATA_KEY = "relays";
 
@@ -29,31 +34,50 @@ export function getUserInfo() {
     return userInfo;
 }
 
-export function updatePreferredRelays(relays: string[]) {
+export function updatePreferredRelays(relays: PreferredRelay[]) {
     const currentPreferredRelays = getItem(RELAYS_DATA_KEY);
     clearItem(RELAYS_DATA_KEY);
     storeItem(RELAYS_DATA_KEY, relays);
 }
 
-export function addPreferredRelay(relay: string) {
+export function addPreferredRelay(relayUrl: string, marker: string) {
     let preferredRelays = getItem(RELAYS_DATA_KEY);
     if (!preferredRelays) {
         preferredRelays = [];
     }
-    if (!preferredRelays.includes(relay)) {
+    if (!preferredRelaysContainsRelay(relayUrl)) {
+        const relay = {
+            url: relayUrl,
+            marker: marker,
+        }
         preferredRelays.push(relay);
     }
     updatePreferredRelays(preferredRelays);
 }
 
-export function removePreferredRelay(relay: string) {
+function preferredRelaysContainsRelay(relayUrl: string) {
+    const preferredRelays = getItem(RELAYS_DATA_KEY);
+    if (!preferredRelays) {
+        return false;
+    }
+    let contains = false;
+
+    preferredRelays.forEach((relay: PreferredRelay) => {
+        if (relay.url === relayUrl) {
+            contains = true;
+        }
+    });
+    return contains
+}
+
+export function removePreferredRelay(relayUrl: string) {
     let preferredRelays = getItem(RELAYS_DATA_KEY);
     if (!preferredRelays) {
         preferredRelays = [];
     }
-    let newList: string[] = [];
-    preferredRelays.forEach((preferredRelay: string) => {
-        if (preferredRelay !== relay) {
+    let newList: PreferredRelay[] = [];
+    preferredRelays.forEach((preferredRelay: PreferredRelay) => {
+        if (preferredRelay.url !== relayUrl) {
             newList.push(preferredRelay);
         }
     });
