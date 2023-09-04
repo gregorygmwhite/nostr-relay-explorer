@@ -168,9 +168,11 @@ export default function MyRelaysPage() {
                                         {user.profile.nip05 && (
                                             <div><strong>nip05: </strong> {user.profile.nip05}</div>
                                         )}
+                                        {user.profile.website && (
+                                            <div><strong>website: </strong> {user.profile.website}</div>
+                                        )}
                                     </div>
                                 )}
-                                <code><pre>{JSON.stringify(user, null, 2)}</pre></code>
                             </Card>
                         ) : (
                             <Card style={{ padding: "2rem", marginBottom: "2rem" }}>
