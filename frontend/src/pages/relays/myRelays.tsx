@@ -42,7 +42,6 @@ export default function MyRelaysPage() {
     const COMMON_FREE_RELAYS_WITH_WRITE_MARKER = COMMON_FREE_RELAYS.map((relay: string) => {
         return {
             url: relay,
-            marker: WRITE_MARKER,
         }
     })
 

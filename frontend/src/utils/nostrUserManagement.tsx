@@ -82,9 +82,15 @@ async function createNIP65Event(relays: PreferredRelay[], user: any ) {
 function transformRelayListIntoEventTags(relays: PreferredRelay[]) {
     const eventTags = relays.map((relay) => {
         validateRelayUrl(relay.url); // throws an error if invalid
-        return [
-            "r", relay.url, relay.marker
-        ];
+        if (relay.marker) {
+            return [
+                "r", relay.url, relay.marker
+            ];
+        } else {
+            return [
+                "r", relay.url
+            ];
+        }
     });
     return eventTags;
 }

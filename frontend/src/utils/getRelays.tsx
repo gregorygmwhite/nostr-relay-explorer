@@ -33,7 +33,10 @@ async function getUsersNIP65Relays(pubkey: string, relayUrls: string[]) {
         if (tag[0] === "r") {
             const relayUrl = tag[1];
             validateRelayUrl(relayUrl);
-            const marker = tag[2];
+            let marker;
+            if (tag.length > 2) {
+                marker = tag[2];
+            }
             const relay = {
                 url: relayUrl,
                 marker: marker,

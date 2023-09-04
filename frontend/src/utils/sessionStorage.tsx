@@ -40,7 +40,7 @@ export function updatePreferredRelays(relays: PreferredRelay[]) {
     storeItem(RELAYS_DATA_KEY, relays);
 }
 
-export function addPreferredRelay(relayUrl: string, marker: string) {
+export function addPreferredRelay(relayUrl: string, marker: string | undefined) {
     let preferredRelays = getItem(RELAYS_DATA_KEY);
     if (!preferredRelays) {
         preferredRelays = [];
