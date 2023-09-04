@@ -45,8 +45,8 @@ export default function HomePage() {
                                 <div className="h3">
                                     Relay Lists
                                 </div>
-                                <div className="mt-3">Find relay lists published by other Nostr accounts via their NIP 5 address or as a raw relay list.</div>
-                                <Button href={pages.getRelayLists()} className="mt-auto" variant="light">Find</Button>
+                                <div className="mt-3">Manage your preferred relay list so clients start out knowing your preference.</div>
+                                <Button href={pages.getMyRelays()} className="mt-auto" variant="light">Manage</Button>
                             </div>
                         </div>
                         <div className="text-center mt-5 mb-5" style={{ width: "20rem"}}>

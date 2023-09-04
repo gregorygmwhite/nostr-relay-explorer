@@ -7,6 +7,8 @@ import "./nav.css"
 const NavBarComponent: React.FC = () => {
     const location = useLocation();
 
+    const REPO_URL = "https://github.com/gregorygmwhite/nostr-relay-explorer";
+
     return (
         <Navbar bg="light" expand="lg">
             <Container>
@@ -28,6 +30,12 @@ const NavBarComponent: React.FC = () => {
                         <Nav.Link
                             href={pages.getMyRelays()}
                             className={location.pathname === pages.getMyRelays() ? 'active' : ''}>My Relays</Nav.Link>
+                        <Nav.Link
+                            href={REPO_URL}
+                            target="_blank"
+                        >
+                            Project Info
+                        </Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
             </Container>

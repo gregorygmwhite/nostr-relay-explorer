@@ -1,7 +1,25 @@
 # nostr-relay-explorer
-A basic web UI for exploring events within relays.
+The Nostr experience is greatly influenced by the quality and number of relays you use. The purpose of Relay.Guide is to help people discover and use the relays that will maximize their enjoyment of Nostr
 
+## Project info
+
+### Client-side querying
 This app is architected so that the connections to relays occurs on the client side (in the browser) so that it can respect the access of client to private relays.
+
+### Methodologies
+##### Calculating relay usage:
+When searching for relays there is a sort option of "usage".This is calculated by querying for the latest 100 zap receipts and calculating how long the window is between the first and latest event in the list. The lower the number the "more active" the relay.
+
+This is a very crude way to measure usage, and suggestions are welcome for a more accurate way to measure usage without special access to the relay.
+
+##### Finding ans publishing preferred relays
+When managing your preferred relays Relay.Guide queries for your existing preferred relay list and also allows you to publish an updated preferred relay list. This is done via the pattern proposed in [NIP 65](https://github.com/nostr-protocol/nips/blob/master/65.md)>.
+
+Most clients are still adding the preferred relay list as part of a contact list ( [NIP 02](https://github.com/nostr-protocol/nips/blob/master/02.md) ). There is still debate on whether the approach for managing a user's preferred relay list will use NIP 02 or NIP 65, but this project will soon support both.
+
+##### Contact
+If you want to talk about anything related to this project, feel free to reach out on Nostr: gregwhite@nostrplebs.com or npub1r3fwhjpx2njy87f9qxmapjn9neutwh7aeww95e03drkfg45cey4qgl7ex2
+
 
 ## Setup for Development
 The app is a split frontend and backend app. The frontend is a vanilla React app, the backend is a django app.
