@@ -12,12 +12,12 @@ When searching for relays there is a sort option of "usage".This is calculated b
 
 This is a very crude way to measure usage, and suggestions are welcome for a more accurate way to measure usage without special access to the relay.
 
-##### Finding ans publishing preferred relays
+##### Finding and publishing preferred relays
 When managing your preferred relays Relay.Guide queries for your existing preferred relay list and also allows you to publish an updated preferred relay list. This is done via the pattern proposed in [NIP 65](https://github.com/nostr-protocol/nips/blob/master/65.md)>.
 
 Most clients are still adding the preferred relay list as part of a contact list ( [NIP 02](https://github.com/nostr-protocol/nips/blob/master/02.md) ). There is still debate on whether the approach for managing a user's preferred relay list will use NIP 02 or NIP 65, but this project will soon support both.
 
-##### Contact
+### Contact
 If you want to talk about anything related to this project, feel free to reach out on Nostr: gregwhite@nostrplebs.com or npub1r3fwhjpx2njy87f9qxmapjn9neutwh7aeww95e03drkfg45cey4qgl7ex2
 
 
