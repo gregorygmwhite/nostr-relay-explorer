@@ -100,5 +100,5 @@ export const COMMON_FREE_RELAYS = [
     "wss://relayable.org",
     "wss://saltivka.org",
     "wss://nostr-pub.wellorder.net",
-    "wss://nostr.bitcoiner.social",
+    // "wss://nostr.bitcoiner.social", // private
 ]

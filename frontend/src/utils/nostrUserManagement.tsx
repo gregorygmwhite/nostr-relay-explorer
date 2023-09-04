@@ -1,58 +1,80 @@
-import NDK, { NDKNip07Signer, NDKEvent } from "@nostr-dev-kit/ndk";
 import { EventKind }  from "../types/event";
 import { getUserInfo, updateUserInfo } from "./sessionStorage";
 import { COMMON_FREE_RELAYS } from "../config/consts"
 import { validateRelayUrl } from "./relayUtils";
-import { nip19 } from 'nostr-tools'
+import {
+    validateEvent,
+    verifySignature,
+    getEventHash,
+    nip19,
+    SimplePool,
+} from 'nostr-tools'
+
+import {
+    getPublicKey as getPublicKeyViaNip07,
+    generateEventSignature as generateEventSignatureViaNip07,
+} from "./nip07"
 
 
-function createNDKEvent(extraRelays: string[]) {
-    const nip07signer = new NDKNip07Signer();
-    const ndk = new NDK({
-        signer: nip07signer,
-        explicitRelayUrls: [...COMMON_FREE_RELAYS, ...extraRelays],
-    });
-    const event = new NDKEvent(ndk);
+function createBaseEvent(pubkey: string) {
+    let event = {
+        id: null as any,
+        sig: null as any,
+        kind: null as any,
+        created_at: Math.floor(Date.now() / 1000),
+        tags: [] as any[],
+        content: '',
+        pubkey: pubkey,
+    }
     return event;
 }
 
-export async function getAndSaveUserInfo() {
-    const nip07signer = new NDKNip07Signer();
-    const ndk = new NDK({
-        signer: nip07signer,
-        explicitRelayUrls: COMMON_FREE_RELAYS,
-    });
-    if(!ndk.signer) {
-        throw new Error("Internal error, signing extension not connected.");
+function finalizeEvent(event: any, signature: string) {
+    event.sig = signature;
+    event.id = getEventHash(event);
+    let ok = validateEvent(event)
+    let veryOk = verifySignature(event)
+    if (!ok || !veryOk) {
+        throw new Error("Invalid event");
     }
-    const user = await ndk.signer.blockUntilReady();
-    const npub = user.npub;
-    const hexpubkey = nip19.decode(user.npub).data;
+    return event;
+}
+
+
+export async function getAndSaveUserInfo() {
+    const pubkey = await getPublicKeyViaNip07();
+    const npub = nip19.npubEncode(pubkey);
     const userData = {
-        pubkey: hexpubkey,
+        pubkey: pubkey,
         npub: npub,
-        profile: user.profile,
-        relayUrls: user.relayUrls, // recommended from the login extension
+        profile: {},
+        relayUrls: [],
     }
     updateUserInfo(userData);
     return userData;
 }
 
-
 export async function createAndPublishRelayList(relays: string[], user: any) {
-    if (!user && !user.pubkey) {
+    if(!user && !user.pubkey) {
         user = await getAndSaveUserInfo();
     }
+    // create event
+    const NIP65Event = await createNIP65Event(relays, user);
 
-    const event = createNDKEvent(relays);
+    // publish event
+    const relaysToPublishTo = [...user.relayUrls, ...COMMON_FREE_RELAYS];
+    await publishToMultipleRelays(NIP65Event, relaysToPublishTo);
+    return NIP65Event;
+}
+
+async function createNIP65Event(relays: string[], user: any ) {
+    let event = createBaseEvent(user.pubkey);
     event.kind = EventKind.RelayListMetadata;
     event.content = "";
     event.tags = transformRelayListIntoEventTags(relays);
-    console.log("publishing relay list event", event)
-    await event.publish().catch((error: any) => {
-        console.log("error publishing relay list event", error)
-    })
-    console.log("finished publishing relay list event")
+    const signature = await generateEventSignatureViaNip07(event);
+    const signedEvent = finalizeEvent(event, signature);
+    return signedEvent;
 }
 
 function transformRelayListIntoEventTags(relays: string[]) {
@@ -65,20 +87,15 @@ function transformRelayListIntoEventTags(relays: string[]) {
     return eventTags;
 }
 
-export async function getUserProfile(userPubKey: any) {
-    console.log("fetching user profile")
+export async function publishToMultipleRelays(event: any, relays: string[]) {
 
-    const ndk = new NDK({
-        explicitRelayUrls: COMMON_FREE_RELAYS,
-    });
-    const userInfo = ndk.getUser({
-        hexpubkey: userPubKey,
-    });
-    console.log("found user", userInfo)
-    const profileInfo = await userInfo.fetchProfile();
+    const pool = new SimplePool()
 
-    console.log("fetched user profile", profileInfo)
+    let pubs = pool.publish(relays, event)
+    await Promise.all(pubs).catch((error: any) => {
+        console.log("error publishing event to relays", event, relays, error)
+        throw new Error("Error publishing  event")
+    })
 
-    return userInfo.profile;
+    pool.close(relays)
 }
-

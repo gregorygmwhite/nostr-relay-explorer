@@ -7,7 +7,7 @@ import {
 import { useState, useEffect } from "react";
 import {
     getAndSaveUserInfo,
-    getUserProfile,
+    createAndPublishRelayList,
 } from "../../utils/nostrUserManagement";
 import {
     getUserInfo,
@@ -19,7 +19,6 @@ import {
 import LoadingIndicator from "../../components/common/loadingIndicator";
 import { getUserRelays } from "../../utils/getRelays";
 import CopyableText from "../../components/common/copyableText";
-import { createAndPublishRelayList } from "../../utils/nostrUserManagement";
 
 
 export default function MyRelaysPage() {
