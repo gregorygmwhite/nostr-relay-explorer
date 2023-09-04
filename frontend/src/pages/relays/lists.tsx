@@ -7,8 +7,9 @@ import { Card, Form } from "react-bootstrap";
 import LoadingIndicator from '../../components/common/loadingIndicator';
 import { relayInit, nip05 } from 'nostr-tools';
 import CopyableText from '../../components/common/copyableText';
-import { isValidRelayUrl } from '../../utils/relayUrl';
+import { isValidRelayUrl } from '../../utils/relayUtils';
 import { isValidPubKey } from '../../utils/publicKeys';
+import { EventKind } from '../../types/event';
 
 export default function RelayListsPage() {
   const defaultLimit = 100;
@@ -172,7 +173,7 @@ export default function RelayListsPage() {
         try {
             let queries: any = [{ limit: defaultLimit }]
 
-            queries[0]["kinds"] = [10002];
+            queries[0]["kinds"] = [EventKind.RelayListMetadata];
 
             queries[0]["authors"] = [pubkey]
 

@@ -4,7 +4,7 @@
     *
     * If you update the list, please update the event type file as well
 **/
-export const NOSTR_KINDS = {
+export const NOSTR_KINDS_DISPLAY = {
     0: "Metadata (0)",
     1: "Short Text Note (1)",
     2: "Recommended Relay (2)",
@@ -91,3 +91,15 @@ export const SPECIAL_RELAY_NIPS = [
     99, // Classified listings
 ]
 
+export const COMMON_FREE_RELAYS = [
+    "wss://relay.primal.net",
+    "wss://nos.lol",
+    "wss://relay.nostr.band",
+    "wss://relay.damus.io",
+    // "wss://nostr.wine", // paid
+    "wss://relayable.org",
+    "wss://saltivka.org",
+    "wss://nostr-pub.wellorder.net",
+    // "wss://nostr.bitcoiner.social", // private
+    "wss://soloco.nl",
+]
