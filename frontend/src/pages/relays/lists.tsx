@@ -10,6 +10,7 @@ import CopyableText from '../../components/common/copyableText';
 import { isValidRelayUrl } from '../../utils/relayUtils';
 import { isValidPubKey } from '../../utils/publicKeys';
 import { EventKind } from '../../types/event';
+import { isValidEmail } from '../../utils/common';
 
 export default function RelayListsPage() {
   const defaultLimit = 100;
@@ -41,6 +42,10 @@ export default function RelayListsPage() {
     setHasEverStartedFetchingRelays(false)
   }
 
+  function isValidNip5(nip5: string) {
+    return isValidEmail(nip5)
+  }
+
   ////////
   // Logic pertaining to retrieving a relay list published by the NIP 5 address itself
   ///////
@@ -58,13 +63,17 @@ export default function RelayListsPage() {
   }
 
   useEffect(() => {
-    const handler = setTimeout(() => {
-      getRelaysFromNip5()
-    }, 1200);
+    if (isValidNip5(nip5Filter)) {
+      const handler = setTimeout(() => {
+        getRelaysFromNip5()
+      }, 1200);
+      return () => {
+        clearTimeout(handler);
+      };
+    } else {
+      setRelayFetchError("Invalid NIP 5 address: " + nip5Filter);
+    }
 
-    return () => {
-      clearTimeout(handler);
-    };
   }, [nip5Filter]);
 
   useEffect(() => {
@@ -112,13 +121,15 @@ export default function RelayListsPage() {
     }
   }
 
-  async function getRelayUrlsFromNIP5(nip5: string) {
+  async function getRelayUrlsFromNIP5(nip5Value: string) {
     resetContext()
     let nip5Relays: string[] = []
-    if (!nip5) {
+    if (!nip5Value) {
       return nip5Relays
     }
-    let profile = await nip05.queryProfile(nip5)
+
+    let profile = await nip05.queryProfile(nip5Value)
+
     if (profile) {
 
       if (profile.pubkey) {
@@ -128,9 +139,12 @@ export default function RelayListsPage() {
       if (profile.relays) {
         nip5Relays = profile.relays
       } else {
-        throw new Error(`No relays found for NIP 5 address ${nip5}`)
+        throw new Error(`No relays found for NIP 5 address ${nip5Value}`)
       }
 
+    } else {
+      console.error(`Failed to fetch profile for NIP 5 address ${nip5Value}`);
+      setRelayFetchError(`Failed to fetch profile for NIP 5 address ${nip5Value}`);
     }
 
     return nip5Relays
