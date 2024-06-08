@@ -79,3 +79,9 @@ make run-frontend
 ## Contributing
 
 Contributions are always welcome! Please feel free to open an issue or create a pull request if you would like to add features, fix bugs, or make other improvements to the project.
+
+### Infrastructure model
+![Infrastructure main model](.infragenie/infrastructure_main_model.svg)
+- [backend component model](.infragenie/backend_component_model.svg)
+
+---
